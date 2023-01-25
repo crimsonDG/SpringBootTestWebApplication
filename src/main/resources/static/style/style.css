@@ -1,0 +1,74 @@
+* {
+    color: rgb(207, 29, 207);
+    text-align: -webkit-center;
+    font-size: 25px;
+    font-family: Arial, Helvetica, sans-serif;
+    vertical-align: 125%;
+}
+
+h1 {
+   font-size: 60px;
+}
+
+body {
+    background-image: url('background.png');
+    background-color: rgba(9, 9, 72);
+}
+
+table {
+    table-layout: auto;
+    width: 80%;
+    background-color: rgba(9, 9, 72);
+}
+
+button, input{
+    background-color: rgba(9, 9, 72);
+}
+
+th,
+td {
+    border: 1px solid rgb(86, 86, 226, 0.565);
+    vertical-align: middle;
+}
+
+a {
+    text-decoration: none;
+    color: crimson;
+    vertical-align: middle;
+}
+
+.table_title {
+    color: rgba(73, 100, 235);
+}
+
+.update_info{
+     background-color: rgba(9, 9, 72);
+     border: 1px solid rgb(86, 86, 226, 0.565);
+     width: 30%;
+     font-size: 40px;
+}
+
+.offset_info{
+    vertical-align: middle;
+    margin-right: 1%;
+    color: rgba(73, 100, 235);
+}
+
+.sort{
+    display: flex;
+    margin-left: 10.15%;
+    height: 38px;
+}
+
+.sort_button{
+    color: rgb(135 183 176);
+}
+
+.input_sort{
+    color: rgb(135 183 176);
+    width: 79.5%;
+}
+
+.find_input{
+    margin-left: 0.1%;;
+ }

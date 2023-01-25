@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>All Users</title>
+    <link rel="stylesheet" th:href="@{/style/style.css}">
+</head>
+<body>
+<h1>List of users: </h1>
+
+<br> <br>
+
+<div class="sort">
+    <form action="asc">
+        <button class="sort_button" type="submit">ID ASC</button>
+    </form>
+
+    <form action="desc">
+        <button class="sort_button" type="submit">ID DESC</button>
+    </form>
+
+    <form action="default">
+        <button class="sort_button" type="submit">Default position</button>
+    </form>
+
+    <form class="find_input" th:action="@{/find}" th:object="${value}" method="post">
+        <input class="input_sort" type="text" name="value">
+        <input class="sort_button" type="submit" value="Find">
+    </form>
+</div>
+
+<div th:switch="${users}">
+    <h2 th:case="null">Not found!</h2>
+    <div th:case="*">
+        <table>
+            <thead>
+            <tr>
+                <th class="table_title">ID</th>
+                <th class="table_title">NAME</th>
+                <th class="table_title">EMAIL</th>
+                <th class="table_title">EDIT</th>
+                <th class="table_title">DELETE</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.login}"></td>
+                <td th:text="${user.email}"></td>
+                <td><a th:href="@{/all/edit/{id}(id=${user.id})}">Edit</a></td>
+                <td><a th:href="@{/delete/{id}(id=${user.id})}">Delete</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<br> <br>
+
+<div>
+    <form action="all/add">
+        <button type="submit">Add new users</button>
+    </form>
+</div>
+<div>
+    <form action="index">
+        <button type="submit">To home</button>
+    </form>
+</div>
+</body>
+</html>

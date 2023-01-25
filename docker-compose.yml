@@ -1,0 +1,20 @@
+version: '2'
+
+services:
+  app:
+    image: 'demo-app:latest'
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+    container_name: demo-app
+    depends_on:
+      - db
+  db:
+    image: 'postgres:latest'
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=user_db
