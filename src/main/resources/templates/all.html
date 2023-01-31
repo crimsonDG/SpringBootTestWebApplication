@@ -19,8 +19,7 @@
     <form action="desc">
         <button class="sort_button" type="submit">ID DESC</button>
     </form>
-
-    <form action="default">
+    <form action="all">
         <button class="sort_button" type="submit">Default position</button>
     </form>
 
@@ -66,6 +65,11 @@
 <div>
     <form action="index">
         <button type="submit">To home</button>
+    </form>
+</div>
+<div>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Sign Out"/>
     </form>
 </div>
 </body>
