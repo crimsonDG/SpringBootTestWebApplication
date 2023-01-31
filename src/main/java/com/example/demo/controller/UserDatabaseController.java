@@ -4,6 +4,7 @@ import com.example.demo.domain.User;
 import com.example.demo.repository.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,12 +13,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+
 @Controller
 public class UserDatabaseController {
 
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    PasswordEncoder encoder;
 
     //All users page
     @GetMapping(path = "/all")
@@ -40,12 +44,6 @@ public class UserDatabaseController {
         return "all";
     }
 
-    //Default users position
-    @GetMapping("/default")
-    public String getDefaultUsers(Model model) {
-        return "redirect:/all";
-    }
-
     //Find user by login
     @PostMapping("/find")
     public String findUserByString(@RequestParam String value, Model model) {
@@ -61,10 +59,11 @@ public class UserDatabaseController {
 
     //Add user form
     @PostMapping("/adduser")
-    public String addUser(@Valid User user, BindingResult result, Model model) {
+    public String addUser(@Valid User user, BindingResult result) {
         if (result.hasErrors()) {
             return "add";
         }
+        user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
         return "redirect:/all";
     }
@@ -81,23 +80,22 @@ public class UserDatabaseController {
     //Update user form
     @PostMapping("/update/{id}")
     public String updateUser(@PathVariable("id") long id, @Valid User user,
-                             BindingResult result, Model model) {
+                             BindingResult result) {
         if (result.hasErrors()) {
             user.setId(id);
             return "update";
         }
+        user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
         return "redirect:/all";
     }
 
     //Delete user
     @GetMapping("/delete/{id}")
-    public String deleteUser(@PathVariable("id") long id, Model model) {
+    public String deleteUser(@PathVariable("id") long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
         userRepository.delete(user);
         return "redirect:/all";
     }
-
-
 }
