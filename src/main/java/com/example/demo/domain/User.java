@@ -4,9 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-import java.util.Set;
-
-
 @Entity
 @Table(name = "users")
 public class User {
@@ -17,7 +14,7 @@ public class User {
     @Size(min = 4, max = 30, message = "Name should be between 4 and 30 characters")
     private String login;
     @NotBlank(message = "Password is mandatory")
-    @Size(min = 6, max = 16, message = "Name should be between 6 and 16 characters")
+    @Size(min = 6, max = 70, message = "Name should be between 6 and 16 characters")
     private String password;
     @NotBlank(message = "Email is mandatory")
     private String email;
