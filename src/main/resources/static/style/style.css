@@ -72,3 +72,7 @@ a {
 .find_input{
     margin-left: 0.1%;;
  }
+
+.login_info{
+    color: rgba(73, 100, 235);
+}
