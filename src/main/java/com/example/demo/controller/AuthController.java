@@ -28,7 +28,7 @@ public class AuthController {
         if (result.hasErrors()) {
             return "registration";
         }
-        if (!userService.saveUser(user)){
+        if (!userService.saveUser(user, false)){
             model.addAttribute("usernameError", "The login already exists");
             result.getModel();
             return "registration";
