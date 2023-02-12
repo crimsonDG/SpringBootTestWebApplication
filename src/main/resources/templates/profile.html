@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>My page</title>
+  <link rel="stylesheet" th:href="@{/style/style.css}">
+</head>
+<body>
+<h1 class="index_title">Hola User!</h1>
+<p>Here can be profile information, information about other users or some files to share.</p>
+<br> <br>
+
+<div>
+  <form action="index">
+    <button type="submit">To home</button>
+  </form>
+</div>
+<div>
+  <form th:action="@{/logout}" method="post">
+    <input type="submit" value="Sign Out"/>
+  </form>
+</div>
+</body>
+</html>

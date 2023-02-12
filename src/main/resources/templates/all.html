@@ -3,11 +3,13 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>All Users</title>
     <link rel="stylesheet" th:href="@{/style/style.css}">
+
 </head>
 <body>
-<h1>List of users: </h1>
+<h1 class="index_title">List of users: </h1>
 
 <br> <br>
 
@@ -38,6 +40,7 @@
                 <th class="table_title">ID</th>
                 <th class="table_title">NAME</th>
                 <th class="table_title">EMAIL</th>
+                <th class="table_title">ROLE</th>
                 <th class="table_title">EDIT</th>
                 <th class="table_title">DELETE</th>
             </tr>
@@ -47,6 +50,7 @@
                 <td th:text="${user.id}"></td>
                 <td th:text="${user.login}"></td>
                 <td th:text="${user.email}"></td>
+                <td th:each="role : ${user.roles}" th:text="${role.name}"></td>
                 <td><a th:href="@{/all/edit/{id}(id=${user.id})}">Edit</a></td>
                 <td><a th:href="@{/delete/{id}(id=${user.id})}">Delete</a></td>
             </tr>

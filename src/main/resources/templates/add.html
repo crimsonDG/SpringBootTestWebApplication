@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Add New User</title>
     <link rel="stylesheet" th:href="@{/style/style.css}">
 </head>
@@ -16,6 +17,7 @@
         <label for="login">Name</label>
         <input type="text" th:field="*{login}" id="login" placeholder="Login">
         <span th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></span>
+        <errors th:text="${usernameError}"></errors>
     </div>
     <div>
         <label for="email">Email</label>

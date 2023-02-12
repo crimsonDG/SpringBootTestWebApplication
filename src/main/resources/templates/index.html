@@ -1,17 +1,41 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://thymeleaf.org">
+<html lang="en" xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Welcome</title>
     <link rel="stylesheet" th:href="@{/style/style.css}">
 </head>
 <body>
-<h1>Hola Amigo!</h1>
+<h1 class="index_title" sec:authorize="!isAuthenticated()">Hola Amigo!</h1>
 
+<div class="index_title" sec:authorize="isAuthenticated()">
+    <h1 class="user_info">Welcome</h1>
+    <h1 class="user_info" sec:authentication="name"></h1>
+    <span class="role_info" sec:authorize="isAuthenticated()" sec:authentication="principal.authorities"></span>
+</div>
 <br> <br>
 
-<form action="all">
-    <button type="submit" >Show users</button>
+<div sec:authorize="!isAuthenticated()">
+    <form action="login">
+        <button type="submit">Login</button>
+    </form>
+
+    <form action="registration">
+        <button type="submit">Registration</button>
+    </form>
+</div>
+
+<form action="all" sec:authorize="hasAuthority('ADMIN')">
+    <button type="submit">All users</button>
+</form>
+
+<form action="profile" sec:authorize="hasAuthority('USER')">
+    <button type="submit">Go to profile</button>
+</form>
+
+<form action="logout" sec:authorize="isAuthenticated()">
+    <button type="submit">Logout</button>
 </form>
 
 </body>

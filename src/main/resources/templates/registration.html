@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://thymeleaf.org">
+<html lang="en" xmlns:th="http://thymeleaf.org" >
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Registration</title>
   <link rel="stylesheet" th:href="@{/style/style.css}">
 </head>
 <body>
-<h1>Registration: </h1>
+<h1 class="index_title">Registration: </h1>
 
 <br> <br>
 
@@ -16,6 +17,8 @@
   <label for="login">Name</label>
   <input type="text" th:field="*{login}" id="login" placeholder="Login">
   <span th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></span>
+  <errors th:text="${usernameError}"></errors>
+
 </div>
 <div>
   <label for="email">Email</label>
@@ -35,7 +38,11 @@
 </div>
 </form>
 
-
+<div>
+  <form action="index">
+    <button type="submit">To home</button>
+  </form>
+</div>
 
 </body>
 </html>

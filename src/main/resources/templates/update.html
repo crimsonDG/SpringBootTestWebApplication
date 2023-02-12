@@ -2,53 +2,66 @@
 <html lang="en" xmlns:th="http://thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Update User</title>
     <link rel="stylesheet" th:href="@{/style/style.css}">
 </head>
 <body>
-    <h1>Update User</h1>
+<h1 class="index_title">Update User</h1>
 
-    <div class="update_info">
-        <label class="offset_info">ID: </label>
-        <label class="offset_info" th:text="${user.id}"></label>
-    </div>
-    <div class="update_info">
-        <label class="offset_info">Current login: </label>
-        <label class="offset_info" th:text="${user.login}"></label>
-    </div>
-    <div class="update_info">
-        <label class="offset_info">Current email: </label>
-        <label class="offset_info" th:text="${user.email}"></label>
-    </div>
+<div class="update_info">
+    <label class="offset_info">ID: </label>
+    <label class="offset_info" th:text="${user.id}"></label>
+</div>
+<div class="update_info">
+    <label class="offset_info">Current login: </label>
+    <label class="offset_info" th:text="${user.login}"></label>
+</div>
+<div class="update_info">
+    <label class="offset_info">Current email: </label>
+    <label class="offset_info" th:text="${user.email}"></label>
+</div>
 
-    <form action="#"
-          th:action="@{/update/{id}(id=${user.id})}"
-          th:object="${user}"
-          method="post">
-        <br> <br>
-        <div>
-            <label for="login">New name: </label>
-            <input type="text" id="login" th:field="*{login}" placeholder="Login">
-            <span th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></span>
-        </div>
-        <div>
-            <label for="email">New email: </label>
-            <input type="email" id="email" th:field="*{email}" placeholder="Email">
-            <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
-        </div>
-        <div>
-            <label for="password">New password: </label>
-            <input type="password" id="password" th:field="*{password}" placeholder="password">
-            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
-        </div>
-        <div>
-            <input type="submit" value="Update User">
-        </div>
-    </form>
+<form action="#"
+      th:action="@{/update/{id}(id=${user.id})}"
+      th:object="${user}"
+      method="post">
+    <br> <br>
     <div>
-        <form action="/all">
-            <button type="submit">Back</button>
-        </form>
+        <label for="login">New name: </label>
+        <input type="text" id="login" th:field="*{login}" placeholder="Login">
+        <span th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></span>
+        <errors th:text="${usernameError}"></errors>
     </div>
+    <div>
+        <label for="email">New email: </label>
+        <input type="email" id="email" th:field="*{email}" placeholder="Email">
+        <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+    </div>
+    <div>
+        <label for="password">New password: </label>
+        <input type="password" id="password" th:field="*{password}" placeholder="password">
+        <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+    </div>
+    <div>
+        <label class="role_radio_label">Select role: </label>
+        <input class="role_radio" type="radio"
+               th:text="USER"
+               th:value=1
+               th:field="*{roles}"/>
+        <input class="role_radio" type="radio"
+               th:text="ADMIN"
+               th:value=2
+               th:field="*{roles}"/>
+    </div>
+    <div>
+        <input type="submit" value="Update User">
+    </div>
+</form>
+<div>
+    <form action="/all">
+        <button type="submit">Back</button>
+    </form>
+</div>
 </body>
 </html>
