@@ -4,16 +4,18 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "users")
 public class User {
     @Id
+    @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank(message = "Login is mandatory")
     @Size(min = 4, max = 30, message = "Name should be between 4 and 30 characters")
     private String login;
-    @NotBlank(message = "Password is mandatory")
     @Size(min = 6, max = 70, message = "Name should be between 6 and 16 characters")
     private String password;
     @NotBlank(message = "Email is mandatory")
@@ -26,6 +28,14 @@ public class User {
         this.password = password;
         this.email = email;
     }
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -59,4 +69,15 @@ public class User {
         this.email = email;
     }
 
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    public void removeRole(Role role) {
+        this.roles.remove(role);
+    }
 }
