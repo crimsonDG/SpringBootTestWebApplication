@@ -8,13 +8,13 @@ import org.springframework.data.repository.query.Param;
 public interface UserRepository extends CrudRepository<User, Long> {
 
     @Query(
-            value = "select * from users order by id asc",
+            value = "select * from users order by user_id asc",
             nativeQuery = true
     )
     Iterable<User> ascSorted();
 
     @Query(
-            value = "select * from users order by id desc",
+            value = "select * from users order by user_id desc",
             nativeQuery = true
     )
     Iterable<User> descSorted();
