@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -8,9 +9,13 @@ import org.springframework.web.bind.annotation.*;
 public class MainController {
 
     //Main page
-    @GetMapping(path = "/index")
+    @GetMapping("/index")
     public String index() {
         return "index";
     }
 
+    @GetMapping("/profile")
+    public String profile(Model model) {
+        return "profile";
+    }
 }
