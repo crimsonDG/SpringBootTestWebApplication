@@ -1,53 +1,46 @@
 package com.example.demo.controller;
 
 import com.example.demo.domain.User;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 
 @Controller
-public class UserDatabaseController {
+public class AdminController {
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    PasswordEncoder encoder;
+    private UserService userService;
 
     //All users page
-    @GetMapping(path = "/all")
+    @GetMapping("/all")
     public String getAllUsers(Model model) {
-        model.addAttribute("users", userRepository.findAll());
+        model.addAttribute("users", userService.findAllUsers());
         return "all";
     }
 
     // Sort users by ascending id
     @GetMapping("/asc")
     public String getAscUsers(Model model) {
-        model.addAttribute("users", userRepository.ascSorted());
+        model.addAttribute("users", userService.sortAllUsersByAsc());
         return "all";
     }
 
     // Sort users by descending id
     @GetMapping("/desc")
     public String getDescUsers(Model model) {
-        model.addAttribute("users", userRepository.descSorted());
+        model.addAttribute("users", userService.sortAllUsersByDesc());
         return "all";
     }
 
     //Find user by login
     @PostMapping("/find")
     public String findUserByString(@RequestParam String value, Model model) {
-        model.addAttribute("users", userRepository.findByLogin(value));
+        model.addAttribute("users", userService.findUserByLogin(value));
         return "all";
     }
 
@@ -59,43 +52,44 @@ public class UserDatabaseController {
 
     //Add user form
     @PostMapping("/adduser")
-    public String addUser(@Valid User user, BindingResult result) {
+    public String addUser(@Valid User user, BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "add";
         }
-        user.setPassword(encoder.encode(user.getPassword()));
-        userRepository.save(user);
+        if (!userService.saveUser(user, false)){
+            model.addAttribute("usernameError", "The login already exists");
+            return "add";
+        }
         return "redirect:/all";
     }
 
     //Update user page
     @GetMapping("/all/edit/{id}")
     public String showUpdateUser(@PathVariable("id") long id, Model model) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
-        model.addAttribute("user", user);
+        model.addAttribute("user", userService.findUserById(id));
         return "update";
     }
 
     //Update user form
     @PostMapping("/update/{id}")
     public String updateUser(@PathVariable("id") long id, @Valid User user,
-                             BindingResult result) {
+                             BindingResult result, Model model) {
         if (result.hasErrors()) {
             user.setId(id);
             return "update";
         }
-        user.setPassword(encoder.encode(user.getPassword()));
-        userRepository.save(user);
+
+        if (!userService.saveUser(user, true)){
+            model.addAttribute("usernameError", "The login already exists");
+            return "update";
+        }
         return "redirect:/all";
     }
 
     //Delete user
     @GetMapping("/delete/{id}")
     public String deleteUser(@PathVariable("id") long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
-        userRepository.delete(user);
+        userService.deleteUser(id);
         return "redirect:/all";
     }
 }
