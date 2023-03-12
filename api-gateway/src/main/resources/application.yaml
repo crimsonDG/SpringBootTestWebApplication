@@ -1,0 +1,43 @@
+server:
+  port: 8080
+
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: main-service
+          uri: lb://main-service/
+          predicates:
+            - Path=/api/**
+        - id: admin-service
+          uri: lb://admin-service/
+          predicates:
+            - Path=/admin/**
+        - id: auth-service
+          uri: lb://auth-service/
+          predicates:
+            - Path=/auth/**
+        - id: discovery-server
+          uri: http://discovery-server:8761
+          predicates:
+            - Path=/eureka/web
+          filters:
+            - SetPath=/
+        - id: discovery-server-static
+          uri: http://discovery-server:8761
+          predicates:
+            - Path=/eureka/**
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    serviceUrl:
+      defaultZone: http://eureka:password@discovery-server:8761/eureka # for Docker
+      # http://eureka:password@localhost:8761/eureka for IDEA
+logging:
+  level:
+    root: INFO
