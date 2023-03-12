@@ -1,0 +1,99 @@
+version: '3.7'
+services:
+
+  db:
+    image: 'postgres:latest'
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=user_db
+    networks:
+      - microservice-network
+
+  discovery-server:
+    image: 'discovery-server:latest'
+    build:
+      context: ./discovery-server
+    container_name: discovery-server
+    ports:
+      - "8761:8761"
+    expose:
+      - "8761"
+    networks:
+      - microservice-network
+
+  api-gateway:
+    image: 'api-gateway:latest'
+    build:
+      context: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    expose:
+      - "8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/user_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      - discovery-server
+    networks:
+      - microservice-network
+
+  admin-service:
+    image: 'admin-service:latest'
+    build:
+      context: ./admin-service
+    container_name: admin-service
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/user_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+    depends_on:
+      - db
+      - discovery-server
+      - api-gateway
+    networks:
+      - microservice-network
+
+  auth-service:
+    container_name: auth-service
+    build:
+      context: ./auth-service
+    image: 'auth-service:latest'
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/user_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+    depends_on:
+      - db
+      - discovery-server
+      - api-gateway
+    networks:
+      - microservice-network
+
+  main-service:
+    container_name: main-service
+    build:
+      context: ./main-service
+    image: 'main-service:latest'
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/user_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+    depends_on:
+      - db
+      - discovery-server
+      - api-gateway
+    networks:
+      - microservice-network
+
+networks:
+  microservice-network:
+    driver: bridge
