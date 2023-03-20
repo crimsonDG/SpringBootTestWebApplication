@@ -12,7 +12,7 @@ spring:
         - id: main-service
           uri: lb://main-service/
           predicates:
-            - Path=/api/**
+            - Path=/main/**
         - id: admin-service
           uri: lb://admin-service/
           predicates:
@@ -22,13 +22,13 @@ spring:
           predicates:
             - Path=/auth/**
         - id: discovery-server
-          uri: http://discovery-server:8761
+          uri: http://discovery-server:8761 # discovery-server for Docker
           predicates:
             - Path=/eureka/web
           filters:
             - SetPath=/
         - id: discovery-server-static
-          uri: http://discovery-server:8761
+          uri: http://discovery-server:8761 # discovery-server for Docker
           predicates:
             - Path=/eureka/**
 eureka:
@@ -37,7 +37,7 @@ eureka:
     register-with-eureka: true
     serviceUrl:
       defaultZone: http://eureka:password@discovery-server:8761/eureka # for Docker
-      # http://eureka:password@localhost:8761/eureka for IDEA
+      #defaultZone: http://eureka:password@localhost:8761/eureka # for IDEA
 logging:
   level:
     root: INFO
