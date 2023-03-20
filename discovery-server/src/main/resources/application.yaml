@@ -11,7 +11,3 @@ server:
 spring:
   application:
     name: discovery-server
-  security:
-    user:
-      name: eureka
-      password: password
