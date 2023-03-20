@@ -5,13 +5,15 @@ import com.security.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// request mapping /admin
 @RestController
-@RequestMapping("/admin")
 @Api(value = "Endpoints of admin controller")
 public class AdminController {
 
@@ -22,24 +24,24 @@ public class AdminController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/all")
     @ApiOperation(value = "All users", response = UserDto[].class)
-    public List<UserDto> getAllUsers() {
-        return userService.findAllUsers();
+    public List<UserDto> getAllUsers(Pageable pageable) {
+        return userService.findAllUsers(pageable);
     }
 
     // Sort users by ascending id
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/asc")
     @ApiOperation(value = "Asc users", response = UserDto[].class)
-    public List<UserDto> getAscUsers() {
-        return userService.sortAllUsersByAsc();
+    public List<UserDto> getAscUsers(Pageable pageable) {
+        return userService.sortAllUsersByAsc(pageable);
     }
 
     // Sort users by descending id
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/desc")
     @ApiOperation(value = "Desc users", response = UserDto[].class)
-    public List<UserDto> getDescUsers() {
-        return userService.sortAllUsersByDesc();
+    public List<UserDto> getDescUsers(Pageable pageable) {
+        return userService.sortAllUsersByDesc(pageable);
     }
 
     //Find user by login
@@ -55,7 +57,7 @@ public class AdminController {
     @PostMapping("/all/add")
     @ApiOperation(value = "Add user", response = UserDto.class)
     public UserDto addUser(@RequestBody UserDto userDto) {
-        if (!userService.saveUser(userDto)){
+        if (!userService.saveUser(userDto)) {
             System.out.println("The login already exists");
             return null;
         }
@@ -67,8 +69,7 @@ public class AdminController {
     @PutMapping("/all/update/{id}")
     @ApiOperation(value = "Update user", response = UserDto.class)
     public UserDto updateUser(@PathVariable("id") long id, @RequestBody UserDto userDto) {
-        if (!userService.updateUser(userDto, id))
-        {
+        if (!userService.updateUser(userDto, id)) {
             System.out.println("The login already exists");
             return null;
         }
