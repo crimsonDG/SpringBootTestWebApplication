@@ -2,6 +2,8 @@ package com.security.service;
 
 import com.core.domain.Role;
 import com.core.domain.User;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +14,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+@Data
+@AllArgsConstructor
 public class UserDetailsImpl implements UserDetails {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -25,14 +29,6 @@ public class UserDetailsImpl implements UserDetails {
     private String password;
 
     private Collection<? extends GrantedAuthority> authorities;
-
-    public UserDetailsImpl(Long id, String username, String email, String password, Collection<? extends GrantedAuthority> authorities) {
-        this.id = id;
-        this.login = username;
-        this.email = email;
-        this.password = password;
-        this.authorities = authorities;
-    }
 
     public static UserDetailsImpl build(User user) {
 
@@ -55,14 +51,6 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     @Override

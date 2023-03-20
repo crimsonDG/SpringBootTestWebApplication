@@ -2,18 +2,15 @@ package com.security.token;
 
 import com.security.service.UserDetailsImpl;
 import io.jsonwebtoken.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+@Slf4j
 @Component
 public class JwtUtils {
-
-
-    private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
     //Should be hidden
     private String jwtSecret = "someSecret";
@@ -38,15 +35,15 @@ public class JwtUtils {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException expEx) {
-            logger.error("Token expired", expEx.getMessage());
+            log.error("Token expired", expEx.getMessage());
         } catch (UnsupportedJwtException unsEx) {
-            logger.error("Unsupported jwt", unsEx.getMessage());
+            log.error("Unsupported jwt", unsEx.getMessage());
         } catch (MalformedJwtException mjEx) {
-            logger.error("Malformed jwt", mjEx.getMessage());
+            log.error("Malformed jwt", mjEx.getMessage());
         } catch (SignatureException sEx) {
-            logger.error("Invalid signature", sEx.getMessage());
+            log.error("Invalid signature", sEx.getMessage());
         } catch (Exception e) {
-            logger.error("invalid token", e.getMessage());
+            log.error("invalid token", e.getMessage());
         }
         return false;
     }

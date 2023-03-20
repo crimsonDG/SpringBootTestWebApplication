@@ -1,13 +1,15 @@
 package com.security.service;
 
-
 import com.core.model.UserDto;
 import com.core.domain.Role;
 import com.core.domain.User;
 import com.core.repository.RoleRepository;
 import com.core.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,35 +19,34 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired//(required = false)
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByLogin(username);
+        User user = userRepository.findByLogin(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username + " user is not found!"));
         return UserDetailsImpl.build(user);
     }
 
     public boolean saveUser(UserDto userDto) {
-        User userFromDB = userRepository.findByLogin(userDto.getLogin());
+        Optional<User> userFromDB = userRepository.findByLogin(userDto.getLogin());
 
-        if (userFromDB != null) {
+        if (userFromDB.isPresent()) {
             return false;
         }
 
@@ -67,8 +68,9 @@ public class UserService implements UserDetailsService {
 
         UserDto currentUser = findUserById(id);
 
-        if (currentUser == null)
+        if (currentUser == null) {
             return false;
+        }
 
         currentUser.setLogin(user.getLogin());
         currentUser.setEmail(user.getEmail());
@@ -91,20 +93,22 @@ public class UserService implements UserDetailsService {
         userRepository.delete(user);
     }
 
-    public List<UserDto> findAllUsers() {
-        return userConverter((List<User>) userRepository.findAll());
+    public List<UserDto> findAllUsers(Pageable pageable) {
+        return userConverter(userRepository.findAll(pageable));
     }
 
-    public List<UserDto> sortAllUsersByAsc() {
-        return userConverter((List<User>) userRepository.ascSorted());
+    public List<UserDto> sortAllUsersByAsc(Pageable pageable) {
+        return userConverter(userRepository.ascSorted(pageable));
     }
 
-    public List<UserDto> sortAllUsersByDesc() {
-        return userConverter((List<User>) userRepository.descSorted());
+    public List<UserDto> sortAllUsersByDesc(Pageable pageable) {
+        return userConverter(userRepository.descSorted(pageable));
     }
 
-    public UserDto findUserByLogin(String value) {
-        return modelMapper.map(userRepository.findByLogin(value), UserDto.class);
+    public UserDto findUserByLogin(String value) throws UsernameNotFoundException {
+        return modelMapper.map(userRepository.findByLogin(value)
+                        .orElseThrow(() -> new UsernameNotFoundException(value + " user is not found!")),
+                UserDto.class);
     }
 
     public UserDto findUserById(long id) {
@@ -112,7 +116,7 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id)), UserDto.class);
     }
 
-    private List<UserDto> userConverter(List<User> usersToDto){
+    private List<UserDto> userConverter(Page<User> usersToDto) {
         return usersToDto.stream().map(u -> modelMapper.map(u, UserDto.class))
                 .collect(Collectors.toList());
     }

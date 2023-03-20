@@ -1,7 +1,7 @@
 package com.security.token;
 
 import com.security.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,15 +16,14 @@ import java.io.IOException;
 
 import static org.springframework.util.StringUtils.hasText;
 
+@RequiredArgsConstructor
 public class AuthTokenFilter extends GenericFilterBean {
 
     public static final String AUTHORIZATION = "Authorization";
 
-    @Autowired
-    private JwtUtils jwtProvider;
+    private final JwtUtils jwtProvider;
 
-    @Autowired
-    private UserService customUserDetailsService;
+    private final UserService customUserDetailsService;
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
