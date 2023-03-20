@@ -1,10 +1,15 @@
 package com.core.model;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
+@Data
+@NoArgsConstructor
 public class UserDto {
 
     private Long id;
@@ -15,56 +20,7 @@ public class UserDto {
     @NotBlank(message = "Email is mandatory")
     private String email;
 
-    public UserDto() {
-    }
-
-    public UserDto(String login, String email, String password) {
-        this.login = login;
-        this.password = password;
-        this.email = email;
-    }
-
     private Set<RoleDto> roles = new HashSet<>();
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Set<RoleDto> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<RoleDto> roles) {
-        this.roles = roles;
-    }
 
     public void removeRole(RoleDto role) {
         this.roles.remove(role);
