@@ -1,4 +1,9 @@
 spring:
+  config:
+    name: com.admin.controller
+  flyway:
+    enabled: true
+    locations: classpath:db.migration
   application:
     name: admin-service
   mvc:
@@ -17,14 +22,15 @@ spring:
   main:
     allow-bean-definition-overriding: true
 server:
+  servlet:
+    context-path: /admin
   port: 0
 eureka:
   client:
     fetch-registry: true
     register-with-eureka: true
     serviceUrl:
-      defaultZone: http://eureka:password@discovery-server:8761/eureka # for Docker
-      # http://eureka:password@localhost:8761/eureka for IDEA
+      #defaultZone: http://eureka:password@discovery-server:8761/eureka # for Docker
+      defaultZone: http://eureka:password@localhost:8761/eureka # for IDEA
   instance:
     instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-    prefer-ip-address: true
