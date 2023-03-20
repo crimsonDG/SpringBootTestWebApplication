@@ -13,8 +13,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+//Request mapping /auth
 @RestController
-@RequestMapping("/auth")
 @Api(value = "Endpoints of auth controller")
 public class AuthController {
 
