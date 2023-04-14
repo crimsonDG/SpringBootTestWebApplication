@@ -5,8 +5,8 @@ import com.core.model.UserDto;
 import com.core.model.template.UserTokenDto;
 import com.security.service.UserService;
 import com.security.token.JwtUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.*;
 
 //Request mapping /auth
 @RestController
-@Api(value = "Endpoints of auth controller")
+@SecurityRequirements({
+        @SecurityRequirement(name = "basic"),
+        @SecurityRequirement(name = "Bearer Authentication")
+})
 public class AuthController {
 
     @Autowired
@@ -28,7 +31,6 @@ public class AuthController {
     private JwtUtils jwtUtils;
 
     @PostMapping("/registration")
-    @ApiOperation(value = "Register user", response = UserDto.class)
     public UserDto registerUser(@RequestBody UserDto userDto) {
         if (!userService.saveUser(userDto)) {
             System.out.println("The login already exists");
@@ -38,7 +40,6 @@ public class AuthController {
     }
 
     @PostMapping("/token")
-    @ApiOperation(value = "Get token for user", response = UserTokenDto.class)
     public UserTokenDto auth(@RequestBody UserAccessDto userAccessDto) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userAccessDto.getLogin(), userAccessDto.getPassword()));

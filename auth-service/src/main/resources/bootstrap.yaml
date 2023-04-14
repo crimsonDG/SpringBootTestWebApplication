@@ -1,0 +1,15 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    config:
+      uri:
+        - http://config-server:8888
+      profile: db, eureka, flyway, instance
+      name: config
+  application:
+    name: auth-service
+server:
+  servlet:
+    context-path: /auth
+  port: 0
