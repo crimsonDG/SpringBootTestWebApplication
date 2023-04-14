@@ -1,15 +1,17 @@
 package com.security.service;
 
+import com.core.client.AuthFeingClient;
 import com.core.model.UserDto;
 import com.core.domain.Role;
 import com.core.domain.User;
+import com.core.model.template.UserAccessDto;
+import com.core.model.template.UserTokenDto;
 import com.core.repository.RoleRepository;
 import com.core.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,14 +20,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
+
+    private final AuthFeingClient authFeingClient;
 
     private final UserRepository userRepository;
 
@@ -93,16 +95,16 @@ public class UserService implements UserDetailsService {
         userRepository.delete(user);
     }
 
-    public List<UserDto> findAllUsers(Pageable pageable) {
-        return userConverter(userRepository.findAll(pageable));
+    public Page<UserDto> findAllUsers(int page, int size) {
+        return userConverter(userRepository.findAll(PageRequest.of(page, size)));
     }
 
-    public List<UserDto> sortAllUsersByAsc(Pageable pageable) {
-        return userConverter(userRepository.ascSorted(pageable));
+    public Page<UserDto> sortAllUsersByAsc(int page, int size) {
+        return userConverter(userRepository.ascSorted(PageRequest.of(page, size)));
     }
 
-    public List<UserDto> sortAllUsersByDesc(Pageable pageable) {
-        return userConverter(userRepository.descSorted(pageable));
+    public Page<UserDto> sortAllUsersByDesc(int page, int size) {
+        return userConverter(userRepository.descSorted(PageRequest.of(page, size)));
     }
 
     public UserDto findUserByLogin(String value) throws UsernameNotFoundException {
@@ -116,8 +118,11 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id)), UserDto.class);
     }
 
-    private List<UserDto> userConverter(Page<User> usersToDto) {
-        return usersToDto.stream().map(u -> modelMapper.map(u, UserDto.class))
-                .collect(Collectors.toList());
+    private Page<UserDto> userConverter(Page<User> usersToDto) {
+        return usersToDto.map(u -> modelMapper.map(u, UserDto.class));
+    }
+
+    public UserTokenDto authUser(UserAccessDto userAccessDto){
+        return authFeingClient.auth(userAccessDto);
     }
 }

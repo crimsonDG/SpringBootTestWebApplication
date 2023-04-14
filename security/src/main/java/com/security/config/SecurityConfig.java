@@ -1,10 +1,15 @@
 package com.security.config;
 
+import com.core.client.AuthFeingClient;
 import com.core.repository.RoleRepository;
 import com.core.repository.UserRepository;
 import com.security.service.UserService;
 import com.security.token.AuthTokenFilter;
 import com.security.token.JwtUtils;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.security.SecuritySchemes;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -23,22 +28,30 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 
 import javax.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity()
+@EnableMethodSecurity
+@SecuritySchemes({
+        @SecurityScheme(name = "Bearer Authentication", type = SecuritySchemeType.HTTP, bearerFormat = "JWT", scheme = "bearer"),
+        @SecurityScheme(name = "basic", scheme = "basic", type = SecuritySchemeType.HTTP, in = SecuritySchemeIn.HEADER)
+})
 public class SecurityConfig {
 
     private static final String[] SWAGGER_WHITELIST = {
             "/**/authenticate",
             "/**/swagger-resources/**",
             "/**/swagger-ui/**",
-            "/**/v2/api-docs/**",
+            "/**/v3/api-docs/**",
             "/**/webjars/**",
             "/**/swagger-ui.html"
     };
+
+    @Autowired(required = false)
+    private AuthFeingClient authFeingClient;
 
     @Autowired
     private UserRepository userRepository;
@@ -48,7 +61,7 @@ public class SecurityConfig {
 
     @Bean
     public UserService userService() {
-        return new UserService(userRepository, roleRepository, passwordEncoder(), modelMapper());
+        return new UserService(authFeingClient, userRepository, roleRepository, passwordEncoder(), modelMapper());
     }
 
     @Bean
@@ -75,6 +88,8 @@ public class SecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
+                .and()
                 .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -83,6 +98,7 @@ public class SecurityConfig {
                 .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((requests) -> requests
                         .antMatchers("/**").permitAll()
+                        .antMatchers("**/instances", "/actuator/**").permitAll()
                         .antMatchers(SWAGGER_WHITELIST).permitAll()
                         .anyRequest().authenticated()
                 );
