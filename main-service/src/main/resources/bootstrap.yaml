@@ -1,0 +1,15 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    config:
+      uri:
+        - http://config-server:8888
+      profile: db, eureka, instance
+      name: config
+  application:
+    name: main-service
+server:
+  servlet:
+    context-path: /main
+  port: 0

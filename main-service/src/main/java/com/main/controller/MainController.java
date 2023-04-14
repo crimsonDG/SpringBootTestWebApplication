@@ -1,16 +1,23 @@
 package com.main.controller;
 
+import com.core.model.template.UserAccessDto;
+import com.core.model.template.UserTokenDto;
 import com.security.service.UserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 // request mapping /admin
 @RestController
-@Api(value = "Endpoints of main controller")
+@SecurityRequirements({
+        @SecurityRequirement(name = "basic"),
+        @SecurityRequirement(name = "Bearer Authentication")
+})
 public class MainController {
 
     @Autowired
@@ -18,15 +25,18 @@ public class MainController {
 
     //Main page
     @GetMapping("/index")
-    @ApiOperation(value = "Index page", response = String.class)
     public String index() {
         return "index";
     }
 
     @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/profile")
-    @ApiOperation(value = "Profile page", response = String.class)
     public String profile() {
         return "profile";
+    }
+
+    @PostMapping("/token")
+    public UserTokenDto auth(@RequestBody UserAccessDto userAccessDto) {
+        return userService.authUser(userAccessDto);
     }
 }
