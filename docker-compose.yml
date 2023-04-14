@@ -23,6 +23,8 @@ services:
       - "8761"
     networks:
       - microservice-network
+    depends_on:
+      - config-server
 
   api-gateway:
     image: 'api-gateway:latest'
@@ -39,6 +41,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=root
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     depends_on:
+      - config-server
       - discovery-server
     networks:
       - microservice-network
@@ -54,6 +57,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=root
       - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
     depends_on:
+      - config-server
       - db
       - discovery-server
       - api-gateway
@@ -71,6 +75,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=root
       - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
     depends_on:
+      - config-server
       - db
       - discovery-server
       - api-gateway
@@ -88,9 +93,34 @@ services:
       - SPRING_DATASOURCE_PASSWORD=root
       - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
     depends_on:
+      - config-server
       - db
       - discovery-server
       - api-gateway
+    networks:
+      - microservice-network
+
+  spring-boot-admin:
+    image: 'spring-boot-admin:latest'
+    build:
+      context: ./sba
+    container_name: spring-boot-admin
+    ports:
+      - "8585:8585"
+    expose:
+      - "8585"
+    networks:
+      - microservice-network
+
+  config-server:
+    image: 'config-server:latest'
+    build:
+      context: ./config-server
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    expose:
+      - "8888"
     networks:
       - microservice-network
 
