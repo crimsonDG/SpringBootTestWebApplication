@@ -1,20 +1,23 @@
 package com.admin.controller;
 
 import com.core.model.UserDto;
+import com.core.model.template.UserAccessDto;
+import com.core.model.template.UserTokenDto;
 import com.security.service.UserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 // request mapping /admin
 @RestController
-@Api(value = "Endpoints of admin controller")
+@SecurityRequirements({
+        @SecurityRequirement(name = "basic"),
+        @SecurityRequirement(name = "Bearer Authentication")
+})
 public class AdminController {
 
     @Autowired
@@ -23,31 +26,30 @@ public class AdminController {
     //All users page
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/all")
-    @ApiOperation(value = "All users", response = UserDto[].class)
-    public List<UserDto> getAllUsers(Pageable pageable) {
-        return userService.findAllUsers(pageable);
+    public Page<UserDto> getAllUsers(@RequestParam(required = false) int page,
+                                     @RequestParam(required = false) int size) {
+        return userService.findAllUsers(page, size);
     }
 
     // Sort users by ascending id
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/asc")
-    @ApiOperation(value = "Asc users", response = UserDto[].class)
-    public List<UserDto> getAscUsers(Pageable pageable) {
-        return userService.sortAllUsersByAsc(pageable);
+    public Page<UserDto> getAscUsers(@RequestParam(required = false) int page,
+                                     @RequestParam(required = false) int size) {
+        return userService.sortAllUsersByAsc(page, size);
     }
 
     // Sort users by descending id
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/desc")
-    @ApiOperation(value = "Desc users", response = UserDto[].class)
-    public List<UserDto> getDescUsers(Pageable pageable) {
-        return userService.sortAllUsersByDesc(pageable);
+    public Page<UserDto> getDescUsers(@RequestParam(required = false) int page,
+                                      @RequestParam(required = false) int size) {
+        return userService.sortAllUsersByDesc(page, size);
     }
 
     //Find user by login
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/find")
-    @ApiOperation(value = "Find current user", response = UserDto.class)
     public UserDto findUserByString(@RequestParam String value) {
         return userService.findUserByLogin(value);
     }
@@ -55,7 +57,6 @@ public class AdminController {
     //Add user form
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/all/add")
-    @ApiOperation(value = "Add user", response = UserDto.class)
     public UserDto addUser(@RequestBody UserDto userDto) {
         if (!userService.saveUser(userDto)) {
             System.out.println("The login already exists");
@@ -67,7 +68,6 @@ public class AdminController {
     //Update user form
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/all/update/{id}")
-    @ApiOperation(value = "Update user", response = UserDto.class)
     public UserDto updateUser(@PathVariable("id") long id, @RequestBody UserDto userDto) {
         if (!userService.updateUser(userDto, id)) {
             System.out.println("The login already exists");
@@ -79,10 +79,14 @@ public class AdminController {
     //Delete user
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/delete/{id}")
-    @ApiOperation(value = "Delete user", response = String.class)
     public String deleteUser(@PathVariable("id") long id) {
         String deletedUser = userService.findUserById(id).getLogin();
         userService.deleteUser(id);
         return deletedUser + " has been deleted";
+    }
+
+    @PostMapping("/token")
+    public UserTokenDto auth(@RequestBody UserAccessDto userAccessDto) {
+        return userService.authUser(userAccessDto);
     }
 }
