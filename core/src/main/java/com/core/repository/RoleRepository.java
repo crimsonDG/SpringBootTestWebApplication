@@ -1,4 +1,4 @@
-package com.security.repository;
+package com.core.repository;
 
 
 import com.core.domain.Role;

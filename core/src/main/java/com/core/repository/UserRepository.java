@@ -1,4 +1,4 @@
-package com.security.repository;
+package com.core.repository;
 
 import com.core.domain.User;
 import org.springframework.data.domain.Page;
@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends CrudRepository<User, Long> {
+
     Page<User> findAll(Pageable pageable);
 
     @Query(
