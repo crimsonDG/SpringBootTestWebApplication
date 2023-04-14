@@ -21,10 +21,13 @@
         <module>discovery-server</module>
         <module>api-gateway</module>
         <module>admin-service</module>
+        <module>management-security</module>
         <module>core</module>
         <module>security</module>
         <module>auth-service</module>
         <module>database-migration</module>
+        <module>sba</module>
+        <module>config-server</module>
     </modules>
 
     <name>demo-microservice</name>
@@ -50,6 +53,24 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
