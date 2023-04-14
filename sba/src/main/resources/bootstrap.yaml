@@ -1,0 +1,17 @@
+spring:
+  security:
+    user:
+      name: admin
+      password: $2a$04$aFsghUjX04PI3hRbjnanKO9adBXflUy401P0iTnMtmb5hufRpdvXC
+  cloud:
+    config:
+      uri:
+        - http://config-server:8888
+      profile: eureka, instance
+      name: config
+  application:
+    name: spring-boot-admin
+server:
+  servlet:
+    context-path: /sba
+  port: 8585
