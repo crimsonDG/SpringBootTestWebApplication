@@ -1,0 +1,11 @@
+spring:
+  security:
+    user:
+      name: eureka
+      password: $2a$04$aFsghUjX04PI3hRbjnanKO9adBXflUy401P0iTnMtmb5hufRpdvXC
+  cloud:
+    config:
+      name: discovery
+      uri:
+        - http://localhost:8888
+        - http://config-server:8888
