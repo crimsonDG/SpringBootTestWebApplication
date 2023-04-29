@@ -10,6 +10,7 @@ spring:
   application:
     name: main-service
 server:
+  forward-headers-strategy: framework
   servlet:
     context-path: /main
   port: 0

@@ -38,4 +38,5 @@ spring:
   application:
     name: api-gateway
 server:
+  forward-headers-strategy: framework
   port: 8080

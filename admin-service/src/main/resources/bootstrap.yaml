@@ -10,6 +10,7 @@ spring:
   application:
     name: admin-service
 server:
+  forward-headers-strategy: framework
   servlet:
     context-path: /admin
   port: 0
