@@ -31,15 +31,11 @@ services:
     build:
       context: ./api-gateway
     container_name: api-gateway
+    hostname: localhost
     ports:
       - "8080:8080"
     expose:
       - "8080"
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/user_db
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=root
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     depends_on:
       - config-server
       - discovery-server
@@ -109,6 +105,10 @@ services:
       - "8585:8585"
     expose:
       - "8585"
+    depends_on:
+      - config-server
+      - discovery-server
+      - api-gateway
     networks:
       - microservice-network
 
