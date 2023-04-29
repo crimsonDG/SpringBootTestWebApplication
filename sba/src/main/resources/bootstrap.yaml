@@ -1,4 +1,9 @@
 spring:
+  boot:
+    admin:
+      discovery:
+        ignored-services:
+          - api-gateway
   security:
     user:
       name: admin
@@ -12,6 +17,7 @@ spring:
   application:
     name: spring-boot-admin
 server:
+  forward-headers-strategy: framework
   servlet:
     context-path: /sba
   port: 8585
