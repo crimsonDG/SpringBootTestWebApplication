@@ -28,6 +28,7 @@
         <module>database-migration</module>
         <module>sba</module>
         <module>config-server</module>
+        <module>rabbitmq-config</module>
     </modules>
 
     <name>demo-microservice</name>
