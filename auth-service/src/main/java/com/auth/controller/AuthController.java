@@ -1,5 +1,7 @@
 package com.auth.controller;
 
+import com.auth.rabbitmq.AuthUserSender;
+import com.auth.rabbitmq.RegisteredUserSender;
 import com.core.model.template.UserAccessDto;
 import com.core.model.UserDto;
 import com.core.model.template.UserTokenDto;
@@ -30,19 +32,31 @@ public class AuthController {
     @Autowired
     private JwtUtils jwtUtils;
 
+    @Autowired
+    private AuthUserSender authUserSender;
+
+    @Autowired
+    private RegisteredUserSender registeredUserSender;
+
     @PostMapping("/registration")
     public UserDto registerUser(@RequestBody UserDto userDto) {
         if (!userService.saveUser(userDto)) {
             System.out.println("The login already exists");
             return null;
         }
-        return userService.findUserByLogin(userDto.getLogin());
+        UserDto currentUser = userService.findUserByLogin(userDto.getLogin());
+        registeredUserSender.sendRegisteredUser(currentUser);
+
+        return currentUser;
     }
 
     @PostMapping("/token")
     public UserTokenDto auth(@RequestBody UserAccessDto userAccessDto) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userAccessDto.getLogin(), userAccessDto.getPassword()));
+
+        UserDto currentUser = userService.findUserByLogin(userAccessDto.getLogin());
+        authUserSender.sendAuthUser(currentUser);
 
         return new UserTokenDto(jwtUtils.generateToken(authentication));
     }
