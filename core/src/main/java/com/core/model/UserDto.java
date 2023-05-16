@@ -5,12 +5,13 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
 @NoArgsConstructor
-public class UserDto {
+public class UserDto implements Serializable {
 
     private Long id;
     @Size(min = 4, max = 30, message = "Name should be between 4 and 30 characters")
