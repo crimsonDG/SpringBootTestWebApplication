@@ -8,8 +8,10 @@ import com.core.model.template.UserAccessDto;
 import com.core.model.template.UserTokenDto;
 import com.core.repository.RoleRepository;
 import com.core.repository.UserRepository;
+import com.security.redis.CustomPage;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +27,7 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
+@CacheConfig(cacheNames = "userCache")
 public class UserService implements UserDetailsService {
 
     private final AuthFeingClient authFeingClient;
@@ -45,6 +48,7 @@ public class UserService implements UserDetailsService {
         return UserDetailsImpl.build(user);
     }
 
+    @Cacheable(cacheNames = "user")
     public boolean saveUser(UserDto userDto) {
         Optional<User> userFromDB = userRepository.findByLogin(userDto.getLogin());
 
@@ -66,6 +70,7 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
+    @CachePut(cacheNames = "user", key = "#id")
     public boolean updateUser(UserDto user, long id) {
 
         UserDto currentUser = findUserById(id);
@@ -84,6 +89,7 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
+    @CacheEvict(cacheNames = "user", key = "#id")
     public void deleteUser(long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
@@ -95,24 +101,29 @@ public class UserService implements UserDetailsService {
         userRepository.delete(user);
     }
 
-    public Page<UserDto> findAllUsers(int page, int size) {
-        return userConverter(userRepository.findAll(PageRequest.of(page, size)));
+    @Cacheable(cacheNames = "users")
+    public CustomPage<UserDto> findAllUsers(int page, int size) {
+        return new CustomPage<>(userConverter(userRepository.findAll(PageRequest.of(page, size))));
     }
 
-    public Page<UserDto> sortAllUsersByAsc(int page, int size) {
-        return userConverter(userRepository.ascSorted(PageRequest.of(page, size)));
+    @Cacheable(cacheNames = "users")
+    public CustomPage<UserDto> sortAllUsersByAsc(int page, int size) {
+        return new CustomPage<>(userConverter(userRepository.findAll(PageRequest.of(page, size))));
     }
 
-    public Page<UserDto> sortAllUsersByDesc(int page, int size) {
-        return userConverter(userRepository.descSorted(PageRequest.of(page, size)));
+    @Cacheable(cacheNames = "users")
+    public CustomPage<UserDto> sortAllUsersByDesc(int page, int size) {
+        return new CustomPage<>(userConverter(userRepository.findAll(PageRequest.of(page, size))));
     }
 
+    @Cacheable(cacheNames = "user", key = "#value")
     public UserDto findUserByLogin(String value) throws UsernameNotFoundException {
         return modelMapper.map(userRepository.findByLogin(value)
                         .orElseThrow(() -> new UsernameNotFoundException(value + " user is not found!")),
                 UserDto.class);
     }
 
+    @Cacheable(cacheNames = "user", key = "#id")
     public UserDto findUserById(long id) {
         return modelMapper.map(userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id)), UserDto.class);
@@ -122,7 +133,7 @@ public class UserService implements UserDetailsService {
         return usersToDto.map(u -> modelMapper.map(u, UserDto.class));
     }
 
-    public UserTokenDto authUser(UserAccessDto userAccessDto){
+    public UserTokenDto authUser(UserAccessDto userAccessDto) {
         return authFeingClient.auth(userAccessDto);
     }
 }
