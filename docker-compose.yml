@@ -52,11 +52,16 @@ services:
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=root
       - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     depends_on:
       - config-server
       - db
       - discovery-server
       - api-gateway
+      - rabbitmq
+      - redis
     networks:
       - microservice-network
 
@@ -70,11 +75,14 @@ services:
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=root
       - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      - SPRING_RABBITMQ_HOST=rabbitmq
     depends_on:
       - config-server
       - db
       - discovery-server
       - api-gateway
+      - rabbitmq
+      - redis
     networks:
       - microservice-network
 
@@ -88,11 +96,14 @@ services:
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=root
       - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      - SPRING_RABBITMQ_HOST=rabbitmq
     depends_on:
       - config-server
       - db
       - discovery-server
       - api-gateway
+      - rabbitmq
+      - redis
     networks:
       - microservice-network
 
@@ -121,6 +132,22 @@ services:
       - "8888:8888"
     expose:
       - "8888"
+    networks:
+      - microservice-network
+
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - microservice-network
+
+  redis:
+    container_name: redis
+    image: 'redis'
+    ports:
+      - "6379:6379"
     networks:
       - microservice-network
 
