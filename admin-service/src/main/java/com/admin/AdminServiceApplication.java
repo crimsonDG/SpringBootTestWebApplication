@@ -18,7 +18,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories({"com.core.repository"})
 @ComponentScans({
         @ComponentScan({"com.core"}),
-        @ComponentScan({"com.security"})
+        @ComponentScan({"com.security"}),
+        @ComponentScan({"com.rabbitmq.config"})
 })
 @OpenAPIDefinition(info = @Info(title = "SpringBootTestWebApplication", version = "1.0.0", description = "Admin service application"))
 public class AdminServiceApplication {
