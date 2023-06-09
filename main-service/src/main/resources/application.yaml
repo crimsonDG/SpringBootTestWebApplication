@@ -1,0 +1,16 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  config:
+    import: optional:configserver:http://config-server:8888
+  cloud:
+    config:
+      profile: db, eureka, instance
+      name: config
+  application:
+    name: main-service
+server:
+  forward-headers-strategy: framework
+  servlet:
+    context-path: /main
+  port: 0
