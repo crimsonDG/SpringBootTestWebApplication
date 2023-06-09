@@ -1,9 +1,10 @@
 package com.security.service;
 
-import com.core.client.AuthFeingClient;
-import com.core.model.UserDto;
+import com.core.client.AuthFeignClient;
 import com.core.domain.Role;
 import com.core.domain.User;
+import com.core.exception.NotFoundException;
+import com.core.model.UserDto;
 import com.core.model.template.UserAccessDto;
 import com.core.model.template.UserTokenDto;
 import com.core.repository.RoleRepository;
@@ -11,15 +12,14 @@ import com.core.repository.UserRepository;
 import com.security.redis.CustomPage;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.cache.annotation.*;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -28,9 +28,9 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 @CacheConfig(cacheNames = "userCache")
-public class UserService implements UserDetailsService {
+public class UserService {
 
-    private final AuthFeingClient authFeingClient;
+    private final AuthFeignClient authFeignClient;
 
     private final UserRepository userRepository;
 
@@ -39,14 +39,6 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
 
     private final ModelMapper modelMapper;
-
-    @Override
-    @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByLogin(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username + " user is not found!"));
-        return UserDetailsImpl.build(user);
-    }
 
     @Cacheable(cacheNames = "user")
     public boolean saveUser(UserDto userDto) {
@@ -61,7 +53,7 @@ public class UserService implements UserDetailsService {
         String roleUser = "USER";
         Set<Role> roles = new HashSet<>();
         Role userRole = roleRepository.findByName(roleUser)
-                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                .orElseThrow(() -> new NotFoundException("Error: Role is not found.")); //RoleException
         roles.add(userRole);
         user.setRoles(roles);
 
@@ -92,10 +84,10 @@ public class UserService implements UserDetailsService {
     @CacheEvict(cacheNames = "user", key = "#id")
     public void deleteUser(long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
+                .orElseThrow(() -> new NotFoundException("Invalid user Id:" + id)); //UserException
 
         Role userRole = roleRepository.findByName(user.getRoles().iterator().next().getName())
-                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                .orElseThrow(() -> new NotFoundException("Role is not found.")); //RoleException
 
         user.removeRole(userRole);
         userRepository.delete(user);
@@ -117,10 +109,9 @@ public class UserService implements UserDetailsService {
     }
 
     @Cacheable(cacheNames = "user", key = "#value")
-    public UserDto findUserByLogin(String value) throws UsernameNotFoundException {
+    public UserDto findUserByLogin(String value) {
         return modelMapper.map(userRepository.findByLogin(value)
-                        .orElseThrow(() -> new UsernameNotFoundException(value + " user is not found!")),
-                UserDto.class);
+                .orElseThrow(() -> new NotFoundException(value + " user is not found!")), UserDto.class);
     }
 
     @Cacheable(cacheNames = "user", key = "#id")
@@ -134,6 +125,6 @@ public class UserService implements UserDetailsService {
     }
 
     public UserTokenDto authUser(UserAccessDto userAccessDto) {
-        return authFeingClient.auth(userAccessDto);
+        return authFeignClient.auth(userAccessDto);
     }
 }
