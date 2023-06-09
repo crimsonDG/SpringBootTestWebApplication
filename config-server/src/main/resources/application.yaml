@@ -2,10 +2,12 @@ server:
   port: 8888
 
 spring:
+  profiles:
+    active: native
   application:
     name: config-server
   cloud:
     config:
       server:
-        git:
-          uri: https://github.com/crimsonDG/config-server-microservice.git
+        native:
+          search-locations: classpath:/configurations
