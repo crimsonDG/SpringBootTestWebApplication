@@ -1,7 +1,13 @@
 package com.main;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.OAuthFlow;
+import io.swagger.v3.oas.annotations.security.OAuthFlows;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.security.SecuritySchemes;
+import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -18,7 +24,27 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
         @ComponentScan({"com.core"}),
         @ComponentScan({"com.security"})
 })
-@OpenAPIDefinition(info = @Info(title = "SpringBootTestWebApplication", version = "1.0.0", description = "Main service application"))
+
+@OpenAPIDefinition(
+        servers = {@Server(url = "http://localhost:8181/main")}, info = @Info(
+                title = "SpringBootTestWebApplication",
+                version = "1.0.0",
+                description = "Main service application"
+        )
+)
+
+@SecuritySchemes({
+        @SecurityScheme(
+                name = "Direct Access Grants",
+                type = SecuritySchemeType.OAUTH2,
+                flows = @OAuthFlows(
+                        password = @OAuthFlow(
+                                tokenUrl = "http://localhost:8080/realms/demo/protocol/openid-connect/token"
+                        )
+                )
+        ),
+        @SecurityScheme(name = "Bearer Authentication", type = SecuritySchemeType.HTTP, bearerFormat = "JWT", scheme = "bearer")
+})
 public class MainServiceApplication {
     public static void main(String[] args) {
         SpringApplication.run(MainServiceApplication.class, args);

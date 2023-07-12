@@ -2,6 +2,7 @@ package com.auth;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -17,7 +18,12 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
         @ComponentScan({"com.security"}),
         @ComponentScan({"com.rabbitmq.config"})
 })
-@OpenAPIDefinition(info = @Info(title = "SpringBootTestWebApplication", version = "1.0.0", description = "Auth service application"))
+
+@OpenAPIDefinition(servers = {@Server(url = "http://localhost:8181/auth")}, info = @Info(
+        title = "SpringBootTestWebApplication",
+        version = "1.0.0",
+        description = "Auth service application"))
+
 public class AuthServiceApplication {
     public static void main(String[] args) {
         SpringApplication.run(AuthServiceApplication.class, args);
