@@ -1,6 +1,6 @@
 package com.auth.rabbitmq;
 
-import com.core.model.UserDto;
+import com.core.model.KeycloakEntityDto;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.config.RabbitMQConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -16,10 +16,10 @@ public class RegisteredUserSender {
     @Autowired
     private RabbitMQConfig rabbitMQConfig;
 
-    public void sendRegisteredUser(UserDto userDto) throws TimeoutException, IOException {
+    public void sendRegisteredUser(KeycloakEntityDto user) throws TimeoutException, IOException {
         Channel channel = rabbitMQConfig.initChannel(RabbitMQConfig.REGISTRATION_QUEUE);
-        channel.basicPublish("", RabbitMQConfig.REGISTRATION_QUEUE, null,  rabbitMQConfig.convertToByte(userDto));
-        log.info(userDto.getLogin() + " has registered in the system!");
+        channel.basicPublish("", RabbitMQConfig.REGISTRATION_QUEUE, null,  rabbitMQConfig.convertToByte(user));
+        log.info(user.getUsername() + " has registered in the system!");
         channel.close();
     }
 }

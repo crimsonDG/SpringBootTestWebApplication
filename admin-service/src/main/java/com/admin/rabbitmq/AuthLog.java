@@ -1,6 +1,6 @@
 package com.admin.rabbitmq;
 
-import com.core.model.UserDto;
+import com.core.model.KeycloakEntityDto;
 import com.rabbitmq.client.*;
 import com.rabbitmq.config.RabbitMQConfig;
 import jakarta.annotation.PostConstruct;
@@ -31,8 +31,8 @@ public class AuthLog {
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
                 ByteArrayInputStream bis = new ByteArrayInputStream(body);
                 ObjectInputStream in = new ObjectInputStream(bis);
-                UserDto userDto = (UserDto) in.readObject();
-                log.info(userDto.getLogin() + " has logged in!");
+                KeycloakEntityDto user = (KeycloakEntityDto) in.readObject();
+                log.info(user.getUsername() + " has logged in!");
             }
         };
         channel.basicConsume(RabbitMQConfig.AUTH_QUEUE, true, consumer);

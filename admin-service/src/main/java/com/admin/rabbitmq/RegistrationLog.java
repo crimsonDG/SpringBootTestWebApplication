@@ -1,6 +1,6 @@
 package com.admin.rabbitmq;
 
-import com.core.model.UserDto;
+import com.core.model.KeycloakEntityDto;
 import com.rabbitmq.client.*;
 import com.rabbitmq.config.RabbitMQConfig;
 import jakarta.annotation.PostConstruct;
@@ -32,8 +32,8 @@ public class RegistrationLog {
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
                 ByteArrayInputStream bis = new ByteArrayInputStream(body);
                 ObjectInputStream in = new ObjectInputStream(bis);
-                UserDto userDto = (UserDto) in.readObject();
-                log.info(userDto.getLogin() + " has registered in the system!");
+                KeycloakEntityDto user = (KeycloakEntityDto) in.readObject();
+                log.info(user.getUsername() + " has registered in the system!");
             }
         };
         channel.basicConsume(RabbitMQConfig.REGISTRATION_QUEUE, true, consumer);
