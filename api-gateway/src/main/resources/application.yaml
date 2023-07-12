@@ -44,3 +44,24 @@ spring:
 server:
   forward-headers-strategy: framework
   port: 8080
+jwt:
+  auth:
+    converter:
+      resource-id: demo-client
+      principal-attribute: preferred-username
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - name: API Gateway Service
+        url: /v3/api-docs
+      - name: admin-service
+        url: /admin/v3/api-docs
+      - name: auth-service
+        url: /auth/v3/api-docs
+      - name: main-service
+        url: /main/v3/api-docs
