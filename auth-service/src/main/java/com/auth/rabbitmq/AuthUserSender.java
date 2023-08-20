@@ -1,25 +1,25 @@
 package com.auth.rabbitmq;
 
 import com.core.model.KeycloakEntityDto;
-import com.rabbitmq.client.Channel;
 import com.rabbitmq.config.RabbitMQConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 
-@Component
+@Service
 @Slf4j
 public class AuthUserSender {
     @Autowired
-    private RabbitMQConfig rabbitMQConfig;
+    private AmqpTemplate rabbitTemplate;
 
-    public void sendAuthUser(KeycloakEntityDto user) throws TimeoutException, IOException {
-        Channel channel = rabbitMQConfig.initChannel(RabbitMQConfig.AUTH_QUEUE);
-        channel.basicPublish("", RabbitMQConfig.AUTH_QUEUE, null,  rabbitMQConfig.convertToByte(user));
-        log.info(user.getUsername() + " has logged in!");
-        channel.close();
+    @Autowired
+    private Consumer<KeycloakEntityDto> definedUserInfo;
+
+    public void sendAuthUser(KeycloakEntityDto keycloakEntityDto) {
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE, RabbitMQConfig.AUTH_ROUTING_KEY, keycloakEntityDto);
+        definedUserInfo.accept(keycloakEntityDto);
     }
 }
