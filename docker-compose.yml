@@ -8,7 +8,8 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=user_db
+    volumes:
+      - ./database-migration/src/main/resources/db-scripts:/docker-entrypoint-initdb.d
     networks:
       - microservice-network
 
@@ -23,8 +24,6 @@ services:
       - "8761"
     networks:
       - microservice-network
-    depends_on:
-      - config-server
 
   api-gateway:
     image: 'api-gateway:latest'
@@ -40,7 +39,6 @@ services:
     expose:
       - "8181"
     depends_on:
-      - config-server
       - discovery-server
     networks:
       - microservice-network
@@ -78,8 +76,8 @@ services:
       - SPRING_RABBITMQ_HOST=rabbitmq
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - KEYCLOAK_TOKEN_URL=http://localhost:8080/realms/demo/protocol/openid-connect/token
     depends_on:
-      - config-server
       - db
       - discovery-server
       - api-gateway
@@ -98,9 +96,11 @@ services:
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=root
       - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
       - SPRING_RABBITMQ_HOST=rabbitmq
+      - KEYCLOAK_TOKEN_URL=http://localhost:8080/realms/demo/protocol/openid-connect/token
     depends_on:
-      - config-server
       - db
       - discovery-server
       - api-gateway
@@ -120,12 +120,35 @@ services:
       - SPRING_DATASOURCE_PASSWORD=root
       - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
       - SPRING_RABBITMQ_HOST=rabbitmq
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - KEYCLOAK_TOKEN_URL=http://localhost:8080/realms/demo/protocol/openid-connect/token
     depends_on:
-      - config-server
       - db
       - discovery-server
       - api-gateway
       - rabbitmq
+      - redis
+    networks:
+      - microservice-network
+
+  music-service:
+    image: 'music-service'
+    build:
+      context: ./music-service
+    container_name: music-service
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/music_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - KEYCLOAK_TOKEN_URL=http://localhost:8080/realms/demo/protocol/openid-connect/token
+    depends_on:
+      - db
+      - discovery-server
+      - api-gateway
       - redis
     networks:
       - microservice-network
@@ -140,21 +163,8 @@ services:
     expose:
       - "8585"
     depends_on:
-      - config-server
       - discovery-server
       - api-gateway
-    networks:
-      - microservice-network
-
-  config-server:
-    image: 'config-server:latest'
-    build:
-      context: ./config-server
-    container_name: config-server
-    ports:
-      - "8888:8888"
-    expose:
-      - "8888"
     networks:
       - microservice-network
 
