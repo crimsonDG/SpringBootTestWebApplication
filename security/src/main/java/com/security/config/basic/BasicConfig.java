@@ -1,16 +1,22 @@
-package com.security.config;
+package com.security.config.basic;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
-public class WebClientConfig {
+public class BasicConfig {
 
     @Bean
     @LoadBalanced
     public WebClient.Builder webClientBuilder() {
         return WebClient.builder();
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 }
