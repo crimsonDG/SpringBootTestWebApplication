@@ -1,4 +1,9 @@
 spring:
+  config:
+    import: >
+      classpath:/configurations/main.yaml,
+      classpath:/configurations/eureka.yaml,
+      classpath:/configurations/instance.yaml
   boot:
     admin:
       discovery:
@@ -8,12 +13,6 @@ spring:
     user:
       name: admin
       password: $2a$04$aFsghUjX04PI3hRbjnanKO9adBXflUy401P0iTnMtmb5hufRpdvXC
-  config:
-    import: optional:configserver:http://config-server:8888
-  cloud:
-    config:
-      profile: eureka, instance
-      name: config
   application:
     name: spring-boot-admin
 server:
