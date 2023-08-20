@@ -1,0 +1,17 @@
+spring:
+  config:
+    import: >
+      classpath:/configurations/main.yaml,
+      classpath:/configurations/db.yaml,
+      classpath:/configurations/eureka.yaml,
+      classpath:/configurations/flyway.yaml,
+      classpath:/configurations/instance.yaml,
+      classpath:/configurations/redis.yaml
+  application:
+    name: music-service
+server:
+  forward-headers-strategy: framework
+  servlet:
+    context-path: /music
+  port: 0
+migration-path: music
