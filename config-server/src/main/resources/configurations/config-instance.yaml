@@ -1,5 +1,0 @@
-eureka:
-  instance:
-    statusPageUrlPath: ${server.servlet.context-path}/actuator${endpoints.info.path:/info}
-    healthCheckUrlPath: ${server.servlet.context-path}/actuator${endpoints.health.path:/health}
-    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
