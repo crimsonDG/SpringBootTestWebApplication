@@ -1,0 +1,2 @@
+redis:
+  url: redis://${REDIS_HOST}:${REDIS_PORT}
