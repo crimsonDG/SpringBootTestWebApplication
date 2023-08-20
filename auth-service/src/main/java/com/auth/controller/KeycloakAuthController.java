@@ -20,9 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
-import java.util.concurrent.TimeoutException;
-
 
 @RestController
 public class KeycloakAuthController {
@@ -44,7 +41,7 @@ public class KeycloakAuthController {
             @ApiResponse(responseCode = "500", description = "Server Error")
     })
     @PostMapping("/keycloak/registration")
-    public KeycloakEntityDto registerKeycloakUser(@RequestBody BaseUserDto baseUserDto) throws IOException, TimeoutException {
+    public KeycloakEntityDto registerKeycloakUser(@RequestBody BaseUserDto baseUserDto){
         if (!keycloakUserService.saveUser(baseUserDto)) {
             System.out.println("The user already exists");
             return null;
@@ -60,7 +57,7 @@ public class KeycloakAuthController {
             @ApiResponse(responseCode = "500", description = "Server Error")
     })
     @PostMapping("/keycloak/token")
-    public UserToken auth(@RequestBody UserAccess userAccess) throws IOException, TimeoutException {
+    public UserToken auth(@RequestBody UserAccess userAccess) {
         //Header
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
