@@ -1,9 +1,7 @@
 package com.core.exception.handler;
 
-import com.core.exception.BadRequestException;
-import com.core.exception.NotFoundException;
+import com.core.exception.MainException;
 import com.core.exception.response.ExceptionInfo;
-import org.apache.hc.client5.http.HttpHostConnectException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,22 +17,12 @@ import static org.springframework.http.HttpStatus.*;
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(NOT_FOUND)
-    public ResponseEntity<ExceptionInfo> handleNotFoundException(NotFoundException e,
+    @ExceptionHandler(MainException.class)
+    public ResponseEntity<ExceptionInfo> handleMainException(MainException e,
                                                                  WebRequest webRequest) {
         ExceptionInfo errorDetails = new ExceptionInfo(new Date(), e.getMessage(),
-                webRequest.getDescription(false));
-        return new ResponseEntity<>(errorDetails, NOT_FOUND);
-    }
-
-    @ExceptionHandler(BadRequestException.class)
-    @ResponseStatus(BAD_REQUEST)
-    public ResponseEntity<ExceptionInfo> handleBadRequestException(NotFoundException e,
-                                                                   WebRequest webRequest) {
-        ExceptionInfo errorDetails = new ExceptionInfo(new Date(), e.getMessage(),
-                webRequest.getDescription(false));
-        return new ResponseEntity<>(errorDetails, BAD_REQUEST);
+                webRequest.getDescription(false), e.getErrorCode().getCode());
+        return new ResponseEntity<>(errorDetails, e.getErrorCode().getStatus());
     }
 
     @ExceptionHandler(Exception.class)
@@ -42,7 +30,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ExceptionInfo> handleGlobalException(Exception e,
                                                                WebRequest webRequest) {
         ExceptionInfo errorDetails = new ExceptionInfo(new Date(),e.getMessage(),
-                webRequest.getDescription(false));
+                webRequest.getDescription(false), "500");
         return new ResponseEntity<>(errorDetails, INTERNAL_SERVER_ERROR);
     }
 
@@ -51,16 +39,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ExceptionInfo> handleConnectException(ConnectException e,
                                                                 WebRequest webRequest) {
         ExceptionInfo errorDetails = new ExceptionInfo(new Date(), e.getMessage(),
-                webRequest.getDescription(false));
+                webRequest.getDescription(false), "406");
         return new ResponseEntity<>(errorDetails, NOT_ACCEPTABLE);
-    }
-
-    @ExceptionHandler(HttpHostConnectException.class)
-    @ResponseStatus(OK)
-    public ResponseEntity<ExceptionInfo> handleHttpHostConnectException(Exception e,
-                                                                WebRequest webRequest) {
-        ExceptionInfo errorDetails = new ExceptionInfo(new Date(), e.getMessage(),
-                webRequest.getDescription(false));
-        return new ResponseEntity<>(errorDetails, OK);
     }
 }

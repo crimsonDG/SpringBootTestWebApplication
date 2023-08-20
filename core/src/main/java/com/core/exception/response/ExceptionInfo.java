@@ -7,7 +7,10 @@ public class ExceptionInfo {
     private String message;
     private String details;
 
-    public ExceptionInfo(Date timestamp, String message, String details) {
+    private String code;
+
+    public ExceptionInfo(Date timestamp, String message, String details, String code) {
+        this.code = code;
         this.timestamp = timestamp;
         this.message = message;
         this.details = details;
@@ -23,5 +26,9 @@ public class ExceptionInfo {
 
     public String getDetails() {
         return details;
+    }
+
+    public String getCode() {
+        return code;
     }
 }
