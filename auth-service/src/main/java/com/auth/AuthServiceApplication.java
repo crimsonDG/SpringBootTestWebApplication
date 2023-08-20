@@ -16,10 +16,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScans({
         @ComponentScan({"com.core"}),
         @ComponentScan({"com.security"}),
-        @ComponentScan({"com.rabbitmq.config"})
+        @ComponentScan({"com.rabbitmq.config"}),
+        @ComponentScan({"com.redis"})
 })
 
-@OpenAPIDefinition(servers = {@Server(url = "http://localhost:8181/auth")}, info = @Info(
+@OpenAPIDefinition(servers = {@Server(url = "${server.servlet.context-path}")}, info = @Info(
         title = "SpringBootTestWebApplication",
         version = "1.0.0",
         description = "Auth service application"))
