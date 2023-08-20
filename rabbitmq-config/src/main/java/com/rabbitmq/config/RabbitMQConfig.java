@@ -1,29 +1,33 @@
 package com.rabbitmq.config;
 
-import com.rabbitmq.client.Channel;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.concurrent.TimeoutException;
-
 @Configuration
 public class RabbitMQConfig {
-    //Fields for auth-service and admin-service communication
+
     public static final String AUTH_QUEUE = "authQueue";
+    public static final String EXCHANGE = "exchange";
+    public static final String AUTH_ROUTING_KEY = "authRoutingKey";
     public static final String REGISTRATION_QUEUE = "registrationQueue";
+    public static final String REGISTRATION_ROUTING_KEY = "registrationRoutingKey";
 
     @Value("${SPRING_RABBITMQ_HOST}")
     private String SPRING_RABBITMQ_HOST;
 
+    @Value("${SPRING_RABBITMQ_PORT}")
+    private int SPRING_RABBITMQ_PORT;
+
     @Bean
     public CachingConnectionFactory connectionFactory() {
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
-        connectionFactory.setPort(5672);
+        connectionFactory.setPort(SPRING_RABBITMQ_PORT);
         connectionFactory.setHost(SPRING_RABBITMQ_HOST);
         connectionFactory.setUsername("guest");
         connectionFactory.setPassword("guest");
@@ -31,24 +35,39 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public org.springframework.amqp.rabbit.connection.Connection connection() throws IOException, TimeoutException {
-        return connectionFactory().createConnection();
+    public Queue authQueue() {
+        return new Queue(AUTH_QUEUE);
     }
 
-    public Channel initChannel(String queue) throws IOException, TimeoutException {
-        Channel channel = connection().createChannel(false);
-
-        channel.queueDeclare(queue, true, false, false, null);
-
-        return channel;
+    @Bean
+    public Queue registrationQueue() {
+        return new Queue(REGISTRATION_QUEUE);
     }
 
-    public byte[] convertToByte(Object user) throws IOException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutputStream out = new ObjectOutputStream(bos);
-        out.writeObject(user);
-        out.flush();
+    @Bean
+    public DirectExchange exchange() {
+        return new DirectExchange(EXCHANGE);
+    }
 
-        return bos.toByteArray();
+    @Bean
+    public Binding authBinding(@Qualifier(AUTH_QUEUE) Queue queue, DirectExchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with(AUTH_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding registrationBinding(@Qualifier(REGISTRATION_QUEUE) Queue queue, DirectExchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with(REGISTRATION_ROUTING_KEY);
+    }
+
+    @Bean
+    public Jackson2JsonMessageConverter converter() {
+        return new Jackson2JsonMessageConverter();
+    }
+
+    @Bean
+    public AmqpTemplate template() {
+        final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory());
+        rabbitTemplate.setMessageConverter(converter());
+        return rabbitTemplate;
     }
 }
