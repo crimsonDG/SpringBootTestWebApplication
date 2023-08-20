@@ -23,11 +23,12 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScans({
         @ComponentScan({"com.core"}),
         @ComponentScan({"com.security"}),
-        @ComponentScan({"com.rabbitmq.config"})
+        @ComponentScan({"com.rabbitmq.config"}),
+        @ComponentScan({"com.redis"})
 })
 
 @OpenAPIDefinition(
-        servers = {@Server(url = "http://localhost:8181/admin")} , info = @Info(
+        servers = {@Server(url = "${server.servlet.context-path}")} , info = @Info(
                 title = "SpringBootTestWebApplication",
                 version = "1.0.0",
                 description = "Admin service application"
@@ -40,7 +41,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
                 type = SecuritySchemeType.OAUTH2,
                 flows = @OAuthFlows(
                         password = @OAuthFlow(
-                                tokenUrl = "http://localhost:8080/realms/demo/protocol/openid-connect/token"
+                                tokenUrl = "${KEYCLOAK_TOKEN_URL}"
                         )
                 )
         ),
