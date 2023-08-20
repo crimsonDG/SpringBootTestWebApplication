@@ -4,7 +4,8 @@ import com.core.client.AuthFeignClient;
 import com.core.domain.KeycloakCredential;
 import com.core.domain.KeycloakEntity;
 import com.core.domain.KeycloakRole;
-import com.core.exception.NotFoundException;
+import com.core.exception.ErrorCode;
+import com.core.exception.MainException;
 import com.core.model.BaseUserDto;
 import com.core.model.KeycloakCredentialDto;
 import com.core.model.KeycloakEntityDto;
@@ -14,9 +15,9 @@ import com.core.model.template.UserToken;
 import com.core.repository.KeycloakCredentialRepository;
 import com.core.repository.KeycloakEntityRepository;
 import com.core.repository.KeycloakRoleRepository;
+import com.redis.config.CustomPage;
 import com.security.common.KeycloakValues;
 import com.security.encoder.KeycloakCustomPasswordEncoder;
-import com.security.redis.CustomPage;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheConfig;
@@ -67,13 +68,13 @@ public class KeycloakUserService {
     @CacheEvict(cacheNames = "user", key = "#id")
     public void deleteUser(String id) {
         KeycloakEntity user = keycloakEntityRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Error: Invalid username:" + id));
+                .orElseThrow(() -> new MainException(ErrorCode.DEMO_USER_NOT_FOUND));
 
         KeycloakRole userRole = keycloakRoleRepository.findByName(user.getRoles().iterator().next().getName())
-                .orElseThrow(() -> new NotFoundException("Error: Role is not found."));
+                .orElseThrow(() -> new MainException(ErrorCode.DEMO_ROLE_NOT_FOUND));
 
         KeycloakCredential userCredential = keycloakCredentialRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new NotFoundException("Error: Credential is not found."));
+                .orElseThrow(() -> new MainException(ErrorCode.DEMO_CREDENTIAL_NOT_FOUND));
 
         user.removeCredential(userCredential);
         keycloakCredentialRepository.delete(userCredential);
@@ -136,7 +137,7 @@ public class KeycloakUserService {
     @Cacheable(cacheNames = "user", key = "#id")
     public KeycloakEntityDto findUserById(String id) {
         return modelMapper.map(keycloakEntityRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Invalid user Id:" + id)), KeycloakEntityDto.class);
+                .orElseThrow(() -> new MainException(ErrorCode.DEMO_USER_NOT_FOUND)), KeycloakEntityDto.class);
     }
 
     private Page<KeycloakEntityDto> userConverter(Page<KeycloakEntity> usersToDto) {
@@ -181,7 +182,7 @@ public class KeycloakUserService {
     private Set<KeycloakRoleDto> getRole(String roleName) {
         Set<KeycloakRoleDto> roles = new HashSet<>();
         KeycloakRoleDto userRole = modelMapper.map(keycloakRoleRepository.findByName(roleName)
-                .orElseThrow(() -> new NotFoundException("Error: Role is not found.")), KeycloakRoleDto.class);
+                .orElseThrow(() -> new MainException(ErrorCode.DEMO_ROLE_NOT_FOUND)), KeycloakRoleDto.class);
         roles.add(userRole);
 
         return roles;
@@ -194,7 +195,7 @@ public class KeycloakUserService {
                 pbkdf2Encoder.getHashedPassword(), pbkdf2Encoder.getSalt());
     }
 
-    public String getTokenUrl(){
+    public String getTokenUrl() {
         return keycloakValues.tokenUrl();
     }
 
