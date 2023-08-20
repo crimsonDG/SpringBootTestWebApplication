@@ -1,6 +1,8 @@
 spring:
   config:
-    import: optional:configserver:http://config-server:8888
+    import: >
+      classpath:/configurations/main.yaml,
+      classpath:/configurations/eureka.yaml
   cloud:
     gateway:
       routes:
@@ -16,6 +18,10 @@ spring:
           uri: lb://auth-service/
           predicates:
             - Path=/auth/**
+        - id: music-service
+          uri: lb://music-service/
+          predicates:
+            - Path=/music/**
         - id: spring-boot-admin
           uri: lb://spring-boot-admin/
           predicates:
@@ -30,9 +36,6 @@ spring:
           uri: http://discovery-server:8761
           predicates:
             - Path=/eureka/**
-    config:
-      profile: eureka
-      name: config
   application:
     name: api-gateway
   security:
@@ -65,3 +68,5 @@ springdoc:
         url: /auth/v3/api-docs
       - name: main-service
         url: /main/v3/api-docs
+      - name: music-service
+        url: /music/v3/api-docs

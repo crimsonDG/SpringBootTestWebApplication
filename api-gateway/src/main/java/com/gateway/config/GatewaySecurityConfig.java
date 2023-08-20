@@ -21,6 +21,7 @@ public class GatewaySecurityConfig {
             "/admin/v3/api-docs/**",
             "/auth/v3/api-docs/**",
             "/main/v3/api-docs/**",
+            "/music/v3/api-docs/**"
     };
 
     private final JwtAuthConverter jwtAuthConverter;
@@ -43,6 +44,8 @@ public class GatewaySecurityConfig {
                         .pathMatchers(SWAGGER_WHITELIST).permitAll()
                         .pathMatchers("/auth/keycloak/**").permitAll()
                         .pathMatchers("/admin/keycloak/**").hasAnyRole("ADMIN")
+                        .pathMatchers("/admin/profile/**").hasAnyRole("ADMIN")
+                        .pathMatchers("/music/songs/**").hasAnyRole("ADMIN")
                         .pathMatchers("/main/keycloak/**").hasAnyRole("USER")
                         .anyExchange()
                         .authenticated()
