@@ -1,12 +1,12 @@
 spring:
-  main:
-    allow-bean-definition-overriding: true
   config:
-    import: optional:configserver:http://config-server:8888
-  cloud:
-    config:
-      profile: db, eureka, flyway, instance
-      name: config
+    import: >
+      classpath:/configurations/main.yaml,
+      classpath:/configurations/db.yaml,
+      classpath:/configurations/eureka.yaml,
+      classpath:/configurations/flyway.yaml,
+      classpath:/configurations/instance.yaml,
+      classpath:/configurations/redis.yaml
   application:
     name: auth-service
 server:
@@ -14,3 +14,4 @@ server:
   servlet:
     context-path: /auth
   port: 0
+migration-path: user
