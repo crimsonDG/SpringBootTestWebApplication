@@ -16,7 +16,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScans({
         @ComponentScan({"com.core"}),
         @ComponentScan({"com.security"}),
-        @ComponentScan({"com.rabbitmq.config"}),
         @ComponentScan({"com.redis"})
 })
 
