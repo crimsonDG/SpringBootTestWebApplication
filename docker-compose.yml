@@ -105,7 +105,7 @@ services:
       - SPRING_RABBITMQ_PASSWORD=guest
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - KEYCLOAK_TOKEN_URL=http://localhost:8080/realms/demo/protocol/openid-connect/token
+      - KEYCLOAK_TOKEN_URL=http://keycloak:8080/realms/demo/protocol/openid-connect/token
     depends_on:
       - db
       - discovery-server
