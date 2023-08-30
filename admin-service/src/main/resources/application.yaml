@@ -6,9 +6,37 @@ spring:
       classpath:/configurations/eureka.yaml,
       classpath:/configurations/flyway.yaml,
       classpath:/configurations/instance.yaml,
-      classpath:/configurations/redis.yaml
+      classpath:/configurations/redis.yaml,
+      classpath:/configurations/rabbitmq.yaml
   application:
     name: admin-service
+  cloud:
+    function:
+      definition: authReceiver;registrationReceiver
+    stream:
+      bindings:
+        authReceiver-in-0:
+          destination: authQueue
+          group: ${spring.application.name}
+          consumer:
+            concurrency: 5
+        registrationReceiver-in-0:
+          destination: registrationQueue
+          group: ${spring.application.name}
+          consumer:
+            concurrency: 5
+      rabbit:
+        bindings:
+          authReceiver-in-0:
+            consumer:
+              auto-bind-dlq: true
+              dlq-ttl: 10000
+              dlq-dead-letter-exchange:
+          registrationReceiver-in-0:
+            consumer:
+              auto-bind-dlq: true
+              dlq-ttl: 10000
+              dlq-dead-letter-exchange:
 server:
   forward-headers-strategy: framework
   servlet:
