@@ -10,6 +10,7 @@ import com.security.service.KeycloakUserService;
 import com.security.service.MusicProfileService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
@@ -50,6 +51,9 @@ public class KeycloakUserConfig {
         return new RestTemplate();
     }
 
+    @Value("${KEYCLOAK_TOKEN_URL}")
+    private String tokenUrl;
+
     @Bean
     public KeycloakValues keycloakValues() {
         return new KeycloakValues(
@@ -58,7 +62,7 @@ public class KeycloakUserConfig {
                 "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}",
                 "password",
                 "custom",
-                "http://keycloak:8080/realms/demo/protocol/openid-connect/token",
+                tokenUrl,
                 "demo-client");
     }
 }
