@@ -28,7 +28,6 @@
         <module>auth-service</module>
         <module>database-migration</module>
         <module>sba</module>
-        <module>rabbitmq-config</module>
         <module>redis-config</module>
         <module>music-service</module>
     </modules>
@@ -43,6 +42,8 @@
         <spring.boot.maven.plugin.version>3.1.0</spring.boot.maven.plugin.version>
         <spring.boot.dependencies.version>3.1.0</spring.boot.dependencies.version>
         <spring-cloud.version>2022.0.2</spring-cloud.version>
+        <snakeyaml.version>2.2</snakeyaml.version>
+        <commons-fileupload.version>2.2</commons-fileupload.version>
     </properties>
 
     <dependencyManagement>
