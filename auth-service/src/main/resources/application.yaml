@@ -6,7 +6,8 @@ spring:
       classpath:/configurations/eureka.yaml,
       classpath:/configurations/flyway.yaml,
       classpath:/configurations/instance.yaml,
-      classpath:/configurations/redis.yaml
+      classpath:/configurations/redis.yaml,
+      classpath:/configurations/rabbitmq.yaml
   application:
     name: auth-service
 server:
@@ -15,3 +16,7 @@ server:
     context-path: /auth
   port: 0
 migration-path: user
+rabbitmq:
+  destination:
+    auth: authQueue
+    registration: registrationQueue
