@@ -1,10 +1,8 @@
 package com.admin.rabbitmq;
 
 import com.core.model.KeycloakEntityDto;
-import com.rabbitmq.config.RabbitMQConfig;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;
@@ -13,11 +11,8 @@ import java.util.function.Consumer;
 @Slf4j
 public class RegistrationLog {
 
-    @Autowired
-    private Consumer<KeycloakEntityDto> definedUserInfo;
-
-    @RabbitListener(queues = RabbitMQConfig.REGISTRATION_QUEUE)
-    public void registrationReceiver(KeycloakEntityDto keycloakEntityDto) {
-        definedUserInfo.accept(keycloakEntityDto);
+    @Bean
+    public Consumer<KeycloakEntityDto> registrationReceiver() {
+        return message -> log.info(message.getUsername() + " has registered to the system!");
     }
 }
