@@ -12,6 +12,7 @@ import org.springframework.util.MultiValueMap;
 public class UserAccess {
     private String grantType;
     private String clientId;
+    private String clientSecret;
     private String username;
     private String password;
 
@@ -19,6 +20,7 @@ public class UserAccess {
         return new LinkedMultiValueMap<>() {{
             add("grant_type", grantType);
             add("client_id", clientId);
+            add("client_secret", clientSecret);
             add("username", username);
             add("password", password);
         }};
