@@ -6,8 +6,8 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=root
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
     volumes:
       - ./database-migration/src/main/resources/db-scripts:/docker-entrypoint-initdb.d
     networks:
@@ -32,8 +32,8 @@ services:
     container_name: api-gateway
     hostname: localhost
     environment:
-      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://keycloak:8080/realms/demo
-      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI=http://keycloak:8080/realms/demo/protocol/openid-connect/certs
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/demo
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://keycloak:8080/realms/demo/protocol/openid-connect/certs
     ports:
       - "8181:8080"
     expose:
@@ -46,7 +46,7 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:21.1.1
     container_name: keycloak
-    command: [ "start-dev", "--import-realm", ]
+    command: [ "start-dev", "--import-realm"]
     environment:
       KC_DB_URL: jdbc:postgresql://db:5432/user_db
       KC_DB_USERNAME: postgres
@@ -69,17 +69,16 @@ services:
       context: ./admin-service
     container_name: admin-service
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/user_db
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=root
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
-      - SPRING_RABBITMQ_HOST=rabbitmq
-      - SPRING_RABBITMQ_PORT=5672
-      - SPRING_RABBITMQ_USERNAME=guest
-      - SPRING_RABBITMQ_PASSWORD=guest
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - KEYCLOAK_TOKEN_URL=http://localhost:8080/realms/demo/protocol/openid-connect/token
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/user_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      KEYCLOAK_TOKEN_URL: http://localhost:8080/realms/demo/protocol/openid-connect/token
     depends_on:
       - db
       - discovery-server
@@ -95,17 +94,16 @@ services:
       context: ./auth-service
     image: 'auth-service:latest'
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/user_db
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=root
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
-      - SPRING_RABBITMQ_HOST=rabbitmq
-      - SPRING_RABBITMQ_PORT=5672
-      - SPRING_RABBITMQ_USERNAME=guest
-      - SPRING_RABBITMQ_PASSWORD=guest
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - KEYCLOAK_TOKEN_URL=http://keycloak:8080/realms/demo/protocol/openid-connect/token
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/user_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      KEYCLOAK_TOKEN_URL: http://keycloak:8080/realms/demo/protocol/openid-connect/token
     depends_on:
       - db
       - discovery-server
@@ -121,19 +119,16 @@ services:
       context: ./main-service
     image: 'main-service:latest'
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/user_db
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=root
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
-      - SPRING_RABBITMQ_HOST=rabbitmq
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - KEYCLOAK_TOKEN_URL=http://localhost:8080/realms/demo/protocol/openid-connect/token
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/user_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: root
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      KEYCLOAK_TOKEN_URL: http://localhost:8080/realms/demo/protocol/openid-connect/token
     depends_on:
       - db
       - discovery-server
       - api-gateway
-      - rabbitmq
       - redis
     networks:
       - microservice-network
@@ -144,13 +139,12 @@ services:
       context: ./music-service
     container_name: music-service
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/music_db
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=root
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - KEYCLOAK_TOKEN_URL=http://localhost:8080/realms/demo/protocol/openid-connect/token
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/music_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: root
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      KEYCLOAK_TOKEN_URL: http://localhost:8080/realms/demo/protocol/openid-connect/token
     depends_on:
       - db
       - discovery-server
