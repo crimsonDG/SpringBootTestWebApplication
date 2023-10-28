@@ -26,7 +26,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(INTERNAL_SERVER_ERROR)
     public ResponseEntity<ExceptionInfo> handleGlobalException(Exception e,
                                                                WebRequest webRequest) {
         ExceptionInfo errorDetails = new ExceptionInfo(new Date(),e.getMessage(),
@@ -35,7 +34,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ConnectException.class)
-    @ResponseStatus(NOT_ACCEPTABLE)
     public ResponseEntity<ExceptionInfo> handleConnectException(ConnectException e,
                                                                 WebRequest webRequest) {
         ExceptionInfo errorDetails = new ExceptionInfo(new Date(), e.getMessage(),
