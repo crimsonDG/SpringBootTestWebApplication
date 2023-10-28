@@ -139,7 +139,8 @@ services:
       context: ./music-service
     container_name: music-service
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/music_db
+      SPRING_DATASOURCE_URL_SONG: jdbc:postgresql://db:5432/song_db
+      SPRING_DATASOURCE_URL_LABEL: jdbc:postgresql://db:5432/label_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: root
       REDIS_HOST: redis
