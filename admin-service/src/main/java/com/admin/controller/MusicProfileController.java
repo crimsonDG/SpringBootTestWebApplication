@@ -1,6 +1,6 @@
 package com.admin.controller;
 
-import com.redis.model.MusicDto;
+import com.redis.model.SongDto;
 import com.security.service.KeycloakUserService;
 import com.security.service.MusicProfileService;
 import com.security.service.response.MusicProfile;
@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -46,7 +45,7 @@ public class MusicProfileController {
             @ApiResponse(responseCode = "500", description = "Server Error")
     })
     @GetMapping("/profile/find")
-    public MusicProfile getAllUsersByName(@PathVariable String username) {
+    public MusicProfile getAllUsersByName(@RequestParam String username) {
         return musicProfileService.findUserByUsername(keycloakUserService.findUserByUsername(username));
     }
 
@@ -73,8 +72,8 @@ public class MusicProfileController {
             @ApiResponse(responseCode = "500", description = "Server Error")
     })
     @GetMapping("/profile/all/songs")
-    public Page<MusicDto> allSongs(@RequestParam(required = false) int page,
-                                   @RequestParam(required = false) int size) {
+    public Page<SongDto> allSongs(@RequestParam(required = false) int page,
+                                  @RequestParam(required = false) int size) {
         return musicProfileService.findAllSongs(page, size);
     }
 
