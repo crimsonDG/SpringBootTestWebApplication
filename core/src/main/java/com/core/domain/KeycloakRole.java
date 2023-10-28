@@ -1,6 +1,5 @@
 package com.core.domain;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -25,12 +24,9 @@ public class KeycloakRole {
 
     private String realm;
 
-    @Column(name = "realm_id")
     private String realmId;
 
-    @Column(name = "client_realm_constraint")
     private String clientRealmConstraint;
 
-    @Column(name = "client_role")
     private boolean clientRole;
 }

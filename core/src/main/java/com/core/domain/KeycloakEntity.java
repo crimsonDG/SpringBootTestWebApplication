@@ -23,33 +23,24 @@ public class KeycloakEntity {
 
     private String email;
 
-    @Column(name = "email_constraint")
     private String emailConstraint;
 
-    @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "first_name")
     private String firstName;
 
-    @Column(name = "realm_id")
     private String realmId;
 
-    @Column(name = "service_account_client_link")
     private String serviceAccountClientLink;
 
-    @Column(name = "federation_link")
     private String federationLink;
 
-    @Column(name = "email_verified")
     private boolean emailVerified;
 
-    @Column(name = "created_timestamp")
     private long createdTimestamp;
 
     private boolean enabled;
 
-    @Column(name = "not_before")
     private int notBefore;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

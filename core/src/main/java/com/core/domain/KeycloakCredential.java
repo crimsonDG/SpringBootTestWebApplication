@@ -21,16 +21,12 @@ public class KeycloakCredential {
 
     private String type;
 
-    @Column(name = "credential_data")
     private String credentialData;
 
-    @Column(name = "secret_data")
     private String secretData;
 
-    @Column(name = "user_label")
     private String userLabel;
 
-    @Column(name = "created_date")
     private long createdDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
