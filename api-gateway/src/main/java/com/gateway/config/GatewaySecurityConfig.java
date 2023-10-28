@@ -46,6 +46,7 @@ public class GatewaySecurityConfig {
                         .pathMatchers("/admin/keycloak/**").hasAnyRole("ADMIN")
                         .pathMatchers("/admin/profile/**").hasAnyRole("ADMIN")
                         .pathMatchers("/music/songs/**").hasAnyRole("ADMIN")
+                        .pathMatchers("/music/labels/**").hasAnyRole("ADMIN")
                         .pathMatchers("/main/keycloak/**").hasAnyRole("USER")
                         .anyExchange()
                         .authenticated()
