@@ -2,7 +2,7 @@ package com.security.service;
 
 import com.core.model.KeycloakEntityDto;
 import com.redis.config.CustomPage;
-import com.redis.model.MusicDto;
+import com.redis.model.SongDto;
 import com.redis.service.RedissonService;
 import com.security.service.response.MusicProfile;
 import lombok.RequiredArgsConstructor;
@@ -41,15 +41,15 @@ public class MusicProfileService {
     }
 
     public String addSongs(KeycloakEntityDto user, String songName) {
-        List<MusicDto> songs = redissonService.getData(RedissonService.STORAGE);
+        List<SongDto> songs = redissonService.getData(RedissonService.STORAGE);
         MusicProfile currentUser = modelMapper.map(user, MusicProfile.class);
 
-        Optional<MusicDto> existingSong = songs.stream()
+        Optional<SongDto> existingSong = songs.stream()
                 .filter(musicDto -> songName.equals(musicDto.getName()))
                 .findFirst();
 
         if (existingSong.isPresent()) {
-            List<MusicDto> updatedSongs = new ArrayList<>(currentUser.getSongs());
+            List<SongDto> updatedSongs = new ArrayList<>(currentUser.getSongs());
 
             if (!updatedSongs.contains(existingSong.get())) {
                 updatedSongs.add(existingSong.get());
@@ -65,15 +65,15 @@ public class MusicProfileService {
     }
 
     public String deleteSong(KeycloakEntityDto user, String songName){
-        List<MusicDto> songs = redissonService.getData(RedissonService.STORAGE);
+        List<SongDto> songs = redissonService.getData(RedissonService.STORAGE);
         MusicProfile currentUser = modelMapper.map(user, MusicProfile.class);
 
-        Optional<MusicDto> songToRemove = songs.stream()
+        Optional<SongDto> songToRemove = songs.stream()
                 .filter(musicDto -> songName.equals(musicDto.getName()))
                 .findFirst();
 
         if (songToRemove.isPresent()) {
-            List<MusicDto> updatedSongs = new ArrayList<>(currentUser.getSongs());
+            List<SongDto> updatedSongs = new ArrayList<>(currentUser.getSongs());
 
             if (updatedSongs.remove(songToRemove.get())) {
                 currentUser.setSongs(updatedSongs);
@@ -87,8 +87,8 @@ public class MusicProfileService {
         }
     }
 
-    public CustomPage<MusicDto> findAllSongs(int page, int size) {
-        List<MusicDto> songs = redissonService.getData(RedissonService.STORAGE);
+    public CustomPage<SongDto> findAllSongs(int page, int size) {
+        List<SongDto> songs = redissonService.getData(RedissonService.STORAGE);
         return new CustomPage<>(songs, page, size, songs.size());
     }
 

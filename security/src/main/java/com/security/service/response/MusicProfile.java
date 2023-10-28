@@ -1,6 +1,6 @@
 package com.security.service.response;
 
-import com.redis.model.MusicDto;
+import com.redis.model.SongDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +22,6 @@ public class MusicProfile implements Serializable {
     private String id;
     private String username;
     private String email;
-    private List<MusicDto> songs;
+    private List<SongDto> songs;
 
 }
