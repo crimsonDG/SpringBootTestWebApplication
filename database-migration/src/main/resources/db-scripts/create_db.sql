@@ -1,3 +1,5 @@
 CREATE DATABASE user_db;
 
-CREATE DATABASE music_db;
+CREATE DATABASE song_db;
+
+CREATE DATABASE label_db;
