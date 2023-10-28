@@ -2,11 +2,27 @@ spring:
   config:
     import: >
       classpath:/configurations/main.yaml,
-      classpath:/configurations/db.yaml,
       classpath:/configurations/eureka.yaml,
-      classpath:/configurations/flyway.yaml,
       classpath:/configurations/instance.yaml,
       classpath:/configurations/redis.yaml
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: validate
+  datasource:
+    label:
+      url: ${SPRING_DATASOURCE_URL_LABEL}
+      username: ${SPRING_DATASOURCE_USERNAME}
+      password: ${SPRING_DATASOURCE_PASSWORD}
+      driver-class-name: org.postgresql.Driver
+    song:
+      url: ${SPRING_DATASOURCE_URL_SONG}
+      username: ${SPRING_DATASOURCE_USERNAME}
+      password: ${SPRING_DATASOURCE_PASSWORD}
+      driver-class-name: org.postgresql.Driver
   application:
     name: music-service
 server:
@@ -14,4 +30,7 @@ server:
   servlet:
     context-path: /music
   port: 0
-migration-path: music
+migration:
+  locations:
+    label: classpath:db.migration/label
+    song: classpath:db.migration/song
