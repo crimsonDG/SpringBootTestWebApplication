@@ -1,8 +1,10 @@
 package com.music.config;
 
-import com.music.init.RedisStorage;
-import com.music.repository.MusicRepository;
+import com.music.label.repository.LabelRepository;
 import com.music.service.MusicService;
+import com.music.song.init.RedisStorage;
+import com.music.song.repository.SongRepository;
+import com.music.song.service.SongService;
 import com.music.service.RedisMusicService;
 import com.redis.service.RedissonService;
 import org.modelmapper.ModelMapper;
@@ -17,19 +19,27 @@ public class MusicConfig {
     public ModelMapper modelMapper;
 
     @Autowired
-    private MusicRepository musicRepository;
+    private SongRepository songRepository;
+
+    @Autowired
+    private LabelRepository labelRepository;
 
     @Autowired
     private RedissonService redissonService;
 
     @Bean
     public RedisStorage redisStorage(){
-        return new RedisStorage(musicService(), redissonService);
+        return new RedisStorage(songService(), redissonService);
+    }
+
+    @Bean
+    public SongService songService(){
+        return new SongService(modelMapper, songRepository);
     }
 
     @Bean
     public MusicService musicService(){
-        return new MusicService(modelMapper, musicRepository);
+        return new MusicService(modelMapper, songService(), labelRepository);
     }
 
     @Bean
