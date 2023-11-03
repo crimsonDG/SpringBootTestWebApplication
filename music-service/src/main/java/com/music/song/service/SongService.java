@@ -51,7 +51,7 @@ public class SongService {
         return new CustomPage<>(musicConverter(songRepository.findAll(PageRequest.of(page, size))));
     }
 
-    @Cacheable(cacheNames = "songs")
+    @Cacheable(cacheNames = "song")
     public boolean saveSong(SongDto songDto) {
         songDto.setId(UUID.randomUUID().toString());
         Optional<SongEntity> musicFromDb = songRepository.findById(songDto.getId());
