@@ -18,13 +18,9 @@ spring:
         authReceiver-in-0:
           destination: authQueue
           group: ${spring.application.name}
-          consumer:
-            concurrency: 5
         registrationReceiver-in-0:
           destination: registrationQueue
           group: ${spring.application.name}
-          consumer:
-            concurrency: 5
       rabbit:
         bindings:
           authReceiver-in-0:
