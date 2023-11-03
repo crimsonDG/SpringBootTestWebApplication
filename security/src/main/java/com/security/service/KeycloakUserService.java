@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -118,6 +119,15 @@ public class KeycloakUserService {
         }
         return baseUserDto;
     }
+
+    @Cacheable(cacheNames = "users")
+    public List<KeycloakEntityDto> getUserList() {
+        return keycloakEntityRepository.findAll()
+                .stream()
+                .map(list -> modelMapper.map(list, KeycloakEntityDto.class))
+                .collect(Collectors.toList());
+    }
+
 
     @Cacheable(cacheNames = "users")
     public CustomPage<KeycloakEntityDto> findAllUsers(int page, int size) {
