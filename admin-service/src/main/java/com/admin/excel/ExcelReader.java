@@ -12,39 +12,41 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class ExcelReader {
     public static List<KeycloakEntityDto> excelToObject(MultipartFile file) throws IOException {
         Workbook workbook = new XSSFWorkbook(file.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
-        List<KeycloakEntityDto> users = new ArrayList<>();
         DataFormatter dataFormatter = new DataFormatter();
 
-        for (int n = 1; n < sheet.getPhysicalNumberOfRows(); n++) {
-            Row row = sheet.getRow(n);
-            KeycloakEntityDto user = new KeycloakEntityDto();
-            int i = row.getFirstCellNum();
+        return IntStream.range(1, sheet.getPhysicalNumberOfRows())
+                .mapToObj(rowIndex -> {
+                    Row row = sheet.getRow(rowIndex);
+                    KeycloakEntityDto user = new KeycloakEntityDto();
+                    int i = row.getFirstCellNum();
 
-            user.setId(getStringCellValue(row, i, dataFormatter));
-            user.setUsername(getStringCellValue(row, ++i, dataFormatter));
-            user.setEmail(getStringCellValue(row, ++i, dataFormatter));
-            user.setEmailConstraint(getStringCellValue(row, ++i, dataFormatter));
-            user.setLastName(getStringCellValue(row, ++i, dataFormatter));
-            user.setFirstName(getStringCellValue(row, ++i, dataFormatter));
-            user.setRealmId(getStringCellValue(row, ++i, dataFormatter));
-            user.setServiceAccountClientLink(getStringCellValue(row, ++i, dataFormatter));
-            user.setFederationLink(getStringCellValue(row, ++i, dataFormatter));
-            user.setEmailVerified(getBooleanCellValue(row, ++i));
-            user.setCreatedTimestamp(getLongCellValue(row, ++i));
-            user.setEnabled(getBooleanCellValue(row, ++i));
-            user.setNotBefore(getIntCellValue(row, ++i));
+                    user.setId(getStringCellValue(row, i, dataFormatter));
+                    user.setUsername(getStringCellValue(row, ++i, dataFormatter));
+                    user.setEmail(getStringCellValue(row, ++i, dataFormatter));
+                    user.setEmailConstraint(getStringCellValue(row, ++i, dataFormatter));
+                    user.setLastName(getStringCellValue(row, ++i, dataFormatter));
+                    user.setFirstName(getStringCellValue(row, ++i, dataFormatter));
+                    user.setRealmId(getStringCellValue(row, ++i, dataFormatter));
+                    user.setServiceAccountClientLink(getStringCellValue(row, ++i, dataFormatter));
+                    user.setFederationLink(getStringCellValue(row, ++i, dataFormatter));
+                    user.setEmailVerified(getBooleanCellValue(row, ++i));
+                    user.setCreatedTimestamp(getLongCellValue(row, ++i));
+                    user.setEnabled(getBooleanCellValue(row, ++i));
+                    user.setNotBefore(getIntCellValue(row, ++i));
 
-            user.setRoles(getRolesFromString(getStringCellValue(row, ++i, dataFormatter)));
-            user.setCredentials(getCredentialsFromString(getStringCellValue(row, ++i, dataFormatter)));
+                    user.setRoles(getRolesFromString(getStringCellValue(row, ++i, dataFormatter)));
+                    user.setCredentials(getCredentialsFromString(getStringCellValue(row, ++i, dataFormatter)));
 
-            users.add(user);
-        }
-        return users;
+                    return user;
+                })
+                .collect(Collectors.toList());
     }
 
     private static String getStringCellValue(Row row, int cellIndex, DataFormatter dataFormatter) {
